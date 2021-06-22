@@ -1,0 +1,16 @@
+{
+  "COMMON":{
+    "TITLE":"Search repos",
+    "SEARCH":"Search...",
+    "NORESULT":"No results",
+    "SEE_IN_GITHUB":"Watch in GitHub",
+    "SEE_ISSUES":"Watch Repo issues",
+    "SEARCH_MESSAGE":"Search by github user",
+    "LANGUAJE":"languages",
+    "CREATE":"Create",
+    "LABEL":"Label",
+    "ISSUE_TITLE":"Issue",
+    "NO_ISSUE_TITLE":"No issue",
+    "STATE":"State"
+  }
+}
