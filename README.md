@@ -2,15 +2,15 @@
 
 Search repo es una aplicación hecha en Ionic (Angular, TypeScript, Sass/Css, Html, Rxjs, Ngrx)
 
-<img src="https://github.com/crislaez/DataMovieCls/blob/master/src/assets/images/foto_proyecto_1.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_1.PNG" />
 <hr>
-<img src="https://github.com/crislaez/DataMovieCls/blob/master/src/assets/images/foto_proyecto_2.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_2.PNG" />
 <hr>
-<img src="https://github.com/crislaez/DataMovieCls/blob/master/src/assets/images/foto_proyecto_3.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_3.PNG" />
 <hr>
-<img src="https://github.com/crislaez/DataMovieCls/blob/master/src/assets/images/foto_proyecto_4.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_4.PNG" />
 <hr>
-<img src="https://github.com/crislaez/DataMovieCls/blob/master/src/assets/images/foto_proyecto_5.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_5.PNG" />
 <hr>
 
 ### Que hace el proyecto
