@@ -9,7 +9,7 @@ import { Repo } from '../models';
 
 export interface State{
   repos?: Repo[];
-  usserName?:string
+  usserName?:string;
   pending?: boolean;
   page?: number;
   total_pages?: number;

@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  baseEndpoint:'https://api.github.com/'
 };
 
 /*

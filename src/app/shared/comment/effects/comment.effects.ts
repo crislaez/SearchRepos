@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { IssueActions } from '../actions';
-import { IssueService } from '../services/issue.service';
+import { CommentActions } from '../actions';
+import { CommentService } from '../services/comment.service';
 
 
 @Injectable()
-export class ReposEffects {
+export class CommentEffects {
 
 
-  loadRepos$ = createEffect(() =>
+  loadComments$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(IssueActions.loadIssues),
-      switchMap(({userName, repoName, page}) =>
-        this._issue.getIssues(userName, repoName, page).pipe(
-          map(({page, issues, total_pages}) => IssueActions.saveIssues({repoName, issues: issues || [], page: page || 1, total_pages: total_pages || 1}) ),
+      ofType(CommentActions.loadComments),
+      switchMap(({userName, repoName, issueNumber, page}) =>
+        this._comment.getComment(userName, repoName, issueNumber, page).pipe(
+          map(({page, comment, total_pages}) => CommentActions.saveComments({comment: comment || [], page: page || 1, total_pages: total_pages || 1}) ),
           catchError((error) => {
             console.log(error)
-            return [IssueActions.saveIssues({repoName, issues: [], page: 1, total_pages: 1}) ]
+            return [CommentActions.saveComments({comment: [], page: 1, total_pages: 1}) ]
           })
         )
       )
@@ -25,10 +25,10 @@ export class ReposEffects {
   );
 
   // loadReposInit$ = createEffect(() =>
-  //   of(IssueActions.loadRepos({name: 'CrisLaez', page: '1'}))
+  //   of(CommentActions.loadRepos({name: 'CrisLaez', page: '1'}))
   // );
 
-  constructor(private _issue: IssueService, private actions$: Actions){}
+  constructor(private _comment: CommentService, private actions$: Actions){}
 }
 // <https://api.github.com/user/51215457/repos?page=3&per_page=15>; rel="prev",
 // <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="next",

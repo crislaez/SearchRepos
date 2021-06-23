@@ -9,7 +9,6 @@ import { EMPTY, Observable, combineLatest } from 'rxjs';
 import { filter, tap, switchMap, map, startWith } from 'rxjs/operators';
 import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
 
-
 @Component({
   selector: 'app-issues',
   template: `
@@ -26,7 +25,7 @@ import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
               <div class="header-container-empty" ></div>
             </div>
 
-            <ion-card class="card ion-activatable ripple-parent fade-in-card" *ngFor="let issue of isssues; trackBy: trackById" >
+            <ion-card class="ion-activatable ripple-parent fade-in-card" *ngFor="let issue of isssues; trackBy: trackById" >
               <ion-card-header>
                 <ion-card-title class="text-color capital-letter">{{issue?.title }}</ion-card-title>
               </ion-card-header>
@@ -38,17 +37,32 @@ import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
                   <div class="width-half margin-top-10">{{'COMMON.STATE' | translate}}:</div>
                   <div class="width-half margin-top-10">{{issue?.state}}</div>
 
+                  <div class="width-half margin-top-10">{{'COMMON.CLOSE' | translate}}:</div>
+                  <div class="width-half margin-top-10">
+                    <ng-container *ngIf="issue?.closed_at; else noComment">{{issue?.closed_at}}</ng-container>
+                    <ng-template #noComment>{{'COMMON.NO' | translate}}</ng-template>
+                  </div>
+
                   <div class="width-half margin-top-10">{{'COMMON.CREATE' | translate}}:</div>
+                  <div class="width-half margin-top-10">{{issue?.created_at | date}}</div>
+
+                  <div class="width-half margin-top-10">{{'COMMON.UPDATE' | translate}}:</div>
                   <div class="width-half margin-top-10">{{issue?.updated_at | date}}</div>
+
+                  <div class="width-half margin-top-10">{{'COMMON.COMMENTS' | translate}}:</div>
+                  <div class="width-half margin-top-10">{{issue?.comments}}</div>
 
                   <ng-container *ngIf="issue?.labels?.length > 0">
                     <div class="width-half margin-top-10">{{'COMMON.LABEL' | translate}}:</div>
                     <div class="width-half margin-top-10"><div class="chip" *ngFor="let label of issue?.labels; trackBy: trackById" [ngStyle]="{'background-color':'#'+label?.color}">{{label?.name}}</div></div>
                   </ng-container>
-
                 </div>
-                <div ><a class="font-small" [href]="issue?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
+
+                <div class="font-small margin-top-10"><a [href]="issue?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
+
+                <div class="font-small margin-top-10" *ngIf="issue?.comments > 0"><ion-button color="primary" class="font-small" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div>
               </ion-card-content>
+
               <ion-ripple-effect></ion-ripple-effect>
             </ion-card>
 

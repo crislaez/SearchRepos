@@ -17,6 +17,11 @@ export const getIssues = createSelector(
   fromIssue.getIssues
 );
 
+export const getRepoName = createSelector(
+  getIssueState,
+  fromIssue.getRepoName
+);
+
 export const getPending = createSelector(
   getIssueState,
   fromIssue.getPending

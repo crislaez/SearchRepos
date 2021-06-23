@@ -42,12 +42,24 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
                     </ion-card-header>
 
                     <ion-card-content class="text-color">
-                      <div class="displays-around margin-top">
-                        <div class="width-half capital-letter font-small">{{'COMMON.LANGUAJE' | translate}}:</div>
-                        <div class="width-half capital-letter font-small">{{repo?.language}}</div>
+                      <div class="displays-around margin-top-10">
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.LANGUAJE' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">
+                          <ng-container *ngIf="repo?.language; else noLanguage">{{repo?.language}}</ng-container>
+                          <ng-template #noLanguage> - </ng-template>
+                        </div>
+
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.OPEN_ISSUES' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">{{repo?.open_issues}}</div>
+
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.PRIVATE' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">
+                          <ng-container *ngIf="repo?.private; else noPrivate">{{'COMMON.YES' | translate}}</ng-container>
+                          <ng-template #noPrivate>{{'COMMON.NO' | translate}}</ng-template>
+                        </div>
                       </div>
-                      <div ><a class="font-small" [href]="repo?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
-                      <div ><a class="font-small" [routerLink]="['/issues/'+repo?.name]">{{'COMMON.SEE_ISSUES' | translate}}</a></div>
+                      <div class="font-small margin-top-10"><a [href]="repo?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
+                      <div class="font-small margin-top-10" *ngIf="repo?.open_issues > 0"><ion-button color="primary" class="font-small" [routerLink]="['/issues/'+repo?.name]">{{'COMMON.SEE_ISSUES' | translate}}</ion-button></div>
 
                     </ion-card-content>
                     <ion-ripple-effect></ion-ripple-effect>
@@ -113,10 +125,14 @@ export class SearchPage {
 
   respos$: Observable<Repo[]> = combineLatest([
     this.formResult$.pipe(startWith('')),
-    this.infiniteScroll$.pipe(startWith(1))
+    this.infiniteScroll$.pipe(startWith(1)),
+    this.store.pipe(select(fromRepos.getUserName))
   ]).pipe(
-    filter(([name, page]) => !!name),
-    tap(([name, page]) => this.store.dispatch(ReposActions.loadRepos({name, page:page.toString()})) ),
+    filter(([name, page, userName]) => !!name || !!userName),
+    tap(([name, page, userName]) => {
+      if(!!name) this.store.dispatch(ReposActions.loadRepos({name, page:page.toString()}))
+      else if(!!userName) this.store.dispatch(ReposActions.loadRepos({name: userName, page:page.toString()}))
+    }),
     switchMap(() =>
       this.store.pipe(select(fromRepos.getRepos))
     ),

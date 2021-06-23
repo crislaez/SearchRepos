@@ -25,4 +25,5 @@ export interface Issue{
   pull_request?: any;
   body?: string;
   performed_via_github_app?: any;
+  creator?: any;
 }
