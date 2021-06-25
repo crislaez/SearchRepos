@@ -15,6 +15,10 @@ const routes: Routes = [
     loadChildren: () => import('./comments/comments.module').then( m => m.CommentsPageModule)
   },
   {
+    path: 'tags',
+    loadChildren: () => import('./tags/tags.module').then( m => m.TagsPageModule)
+  },
+  {
     path: '**',
     redirectTo: 'search',
     pathMatch: 'full',

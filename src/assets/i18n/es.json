@@ -5,13 +5,16 @@
     "NORESULT":"No results",
     "SEE_IN_GITHUB":"Watch in GitHub",
     "SEE_ISSUES":"Watch Repo issues",
+    "TAGS":"Watch Repo tags",
     "SEARCH_MESSAGE":"Search by github user",
     "LANGUAJE":"languages",
     "CREATE":"Create",
     "UPDATE":"Update",
     "LABEL":"Label",
     "ISSUE_TITLE":"Issue",
+    "TAG_TITLE":"Tags",
     "NO_ISSUE_TITLE":"No issue",
+    "NO_TAGS":"No tags",
     "STATE":"State",
     "CLOSE":"Close",
     "CREATE_BY":"Create by",
@@ -20,6 +23,8 @@
     "NO":"No",
     "OPEN_ISSUES":"Open issues",
     "PRIVATE":"Private",
-    "SEE_COMMENTS":"Watch issues comment"
+    "SEE_COMMENTS":"Watch issues comment",
+    "AUTHOR_ASSOCIATION":"Author association",
+    "COMMIT":"Commit"
   }
 }

@@ -27,7 +27,7 @@ const issueReducer = createReducer(
   initialState,
   on(IssueActions.loadIssues, (state) => ({...state, pending: true})),
   on(IssueActions.saveIssues, (state, { repoName, issues, page, total_pages }) => ({...state, repoName, issues:[...state.issues, ...issues], page, total_pages, pending: false })),
-  on(IssueActions.deleteIssues, (state) => ({...state, issues:[], page:1, total_pages:1, pending: false })),
+  on(IssueActions.deleteIssues, (state) => ({...state, issues:[], page:1, total_pages:1, repoName:'', pending: false })),
 
 );
 

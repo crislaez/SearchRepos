@@ -30,11 +30,3 @@ export class ReposEffects {
 
   constructor(private _issue: IssueService, private actions$: Actions){}
 }
-// <https://api.github.com/user/51215457/repos?page=3&per_page=15>; rel="prev",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="next",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="last",
-// <https://api.github.com/user/51215457/repos?page=1&per_page=15>; rel="first"
-
-
-// <https://api.github.com/user/51215457/repos?page=2&per_page=15>; rel="next",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="last"

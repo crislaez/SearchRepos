@@ -8,6 +8,7 @@ import { select, Store } from '@ngrx/store';
 import { EMPTY, Observable, combineLatest } from 'rxjs';
 import { filter, tap, switchMap, map, startWith } from 'rxjs/operators';
 import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
+import { CommentActions } from '@clrepos/shared/comment';
 
 @Component({
   selector: 'app-issues',
@@ -15,7 +16,7 @@ import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
   <ion-content [fullscreen]="true">
     <div class="container components-color">
 
-      <ng-container *ngIf="(issues$ | async) as isssues; else loader">
+      <ng-container *ngIf="(issues$ | async) as isssues">
         <ng-container *ngIf="!(pending$ | async); else loader">
           <ng-container *ngIf="isssues?.length > 0 ; else noData">
 
@@ -31,7 +32,7 @@ import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
               </ion-card-header>
 
               <ion-card-content class="text-color">
-                <div class="font-small" *ngIf="issue?.body" [innerHTML]="issue?.body"></div>
+                <div class="font-medium" *ngIf="issue?.body" [innerHTML]="issue?.body"></div>
                 <!-- <div ><a class="font-small" [routerLink]="['/issues/'+issue?.name]">{{'COMMON.SEE_ISSUES' | translate}}</a></div> -->
                 <div class="displays-around margin-top font-small capital-letter">
                   <div class="width-half margin-top-10">{{'COMMON.STATE' | translate}}:</div>
@@ -49,6 +50,9 @@ import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
                   <div class="width-half margin-top-10">{{'COMMON.UPDATE' | translate}}:</div>
                   <div class="width-half margin-top-10">{{issue?.updated_at | date}}</div>
 
+                  <div class="width-half margin-top-10">{{'COMMON.AUTHOR_ASSOCIATION' | translate}}:</div>
+                  <div class="width-half margin-top-10">{{issue?.author_association}}</div>
+
                   <div class="width-half margin-top-10">{{'COMMON.COMMENTS' | translate}}:</div>
                   <div class="width-half margin-top-10">{{issue?.comments}}</div>
 
@@ -60,7 +64,7 @@ import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
 
                 <div class="font-small margin-top-10"><a [href]="issue?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
 
-                <div class="font-small margin-top-10" *ngIf="issue?.comments > 0"><ion-button color="primary" class="font-small" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div>
+                <div class="font-small margin-top-10" *ngIf="issue?.comments > 0"><ion-button color="primary" class="font-small" (click)="saveCommentTotalPage(issue?.comments)" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div>
               </ion-card-content>
 
               <ion-ripple-effect></ion-ripple-effect>
@@ -164,5 +168,8 @@ export class IssuesPage {
     }, 500);
   }
 
+  saveCommentTotalPage(total_pages:number): void{
+    this.store.dispatch(CommentActions.saveCommentsTotalPages({total_pages}))
+  }
 
 }

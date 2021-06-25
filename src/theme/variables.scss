@@ -319,13 +319,13 @@ ion-card{
 
   //titulo de la card
   ion-card-title{
-    font-size: 25px;
+    font-size: 21px;
     text-align: center;
   }
 
   //contenido de la card
   ion-card-content{
-    font-size: 15px;
+    font-size: 13px;
     text-align: center;
   }
 
@@ -335,8 +335,9 @@ ion-card{
   }
 
   ion-button{
-    width: 70%;
-    height: 40px;
+    width: 60%;
+    height: 35px;
+    font-size: 11px;
   }
 }
 
@@ -392,8 +393,12 @@ ion-card{
   width: 45%;
 }
 
+.font-medium{
+  font-size: 13px !important;
+}
+
 .font-small{
-  font-size: 15px !important;
+  font-size: 9px !important;
 }
 
 .margin-top{
@@ -407,7 +412,7 @@ ion-card{
 .chip{
   border-radius: 10px;
   margin-top: 5px !important;
-  height: 25px !important;
+  min-height: 20px !important;
 }
 
 .displays-between{
@@ -516,7 +521,8 @@ ion-card{
 
 .fade-in-card {
   animation: fadeIn 2s;
-  animation: fadeInUp 1s
+  animation: fadeInUp 1s;
+  animation: scale 0.5s;
 }
 
 @keyframes fadeIn {
@@ -527,6 +533,11 @@ ion-card{
 @keyframes fadeInUp {
   0% {transform:translateY(60px);}
   100% {transform:translateY(0px);}
+}
+
+@keyframes scale {
+  0% {transform:scale(0.5,0.5);}
+  100% {transform:scale(1,1);}
 }
 
 .span-bold{

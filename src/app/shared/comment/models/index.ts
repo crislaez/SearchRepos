@@ -9,4 +9,5 @@ export interface Comment {
   author_association?:string;
   body?:string;
   performed_via_github_app?:any
+  user?:any;
 }

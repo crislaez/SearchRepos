@@ -24,8 +24,10 @@ const initialState: State = {
 const issueReducer = createReducer(
   initialState,
   on(CommentActions.loadComments, (state) => ({...state, pending: true})),
-  on(CommentActions.saveComments, (state, { comment, page, total_pages }) => ({...state, comment:[...state.comment, ...comment], page, total_pages, pending: false })),
+  on(CommentActions.saveComments, (state, { comment, page }) => ({...state, comment:[...state.comment, ...comment], page, pending: false })),
   on(CommentActions.deleteComments, (state) => ({...state, comment:[], page:1, total_pages:1, pending: false })),
+
+  on(CommentActions.saveCommentsTotalPages, (state, {total_pages}) => ({...state, total_pages }))
 
 );
 

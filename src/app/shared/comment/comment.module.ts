@@ -17,4 +17,4 @@ import * as fromComment from './reducers';
     EffectsModule.forFeature([CommentEffects])
   ]
 })
-export class CommentPageModule {}
+export class CommentModule {}

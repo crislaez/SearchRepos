@@ -1,11 +1,13 @@
-import { Component, ChangeDetectionStrategy, EventEmitter, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { combineLatest, from, Observable } from 'rxjs';
-import { filter, startWith, tap, switchMap, shareReplay } from 'rxjs/operators';
+import { fromRepos, Repo, ReposActions } from '@clrepos/shared/repos';
+import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
+import { IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
-import { ReposActions, fromRepos, Repo } from '@clrepos/shared/repos';
-import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
-import { IonContent, IonInfiniteScroll } from '@ionic/angular';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import { Keyboard } from '@capacitor/keyboard';
+import { Platform } from '@ionic/angular';
 
 
 @Component({
@@ -21,7 +23,7 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
             </form>
           </div>
 
-          <ng-container *ngIf="(respos$ | async) as respos ; else searchMessage">
+          <ng-container *ngIf="(respos$ | async) as respos">
             <ng-container *ngIf="!(pending$ | async); else loader">
               <ng-container *ngIf="showFormresult; else searchMessage">
                 <ng-container *ngIf="respos?.length > 0 ; else noData">
@@ -42,6 +44,8 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
                     </ion-card-header>
 
                     <ion-card-content class="text-color">
+                      <div class="font-medium margin-top-10" [innerHTML]="repo?.description"></div>
+
                       <div class="displays-around margin-top-10">
                         <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.LANGUAJE' | translate}}:</div>
                         <div class="width-half capital-letter font-small margin-top-10">
@@ -60,6 +64,7 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
                       </div>
                       <div class="font-small margin-top-10"><a [href]="repo?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
                       <div class="font-small margin-top-10" *ngIf="repo?.open_issues > 0"><ion-button color="primary" class="font-small" [routerLink]="['/issues/'+repo?.name]">{{'COMMON.SEE_ISSUES' | translate}}</ion-button></div>
+                      <div class="font-small margin-top-10" *ngIf="repo?.open_issues > 0"><ion-button color="primary" class="font-small" [routerLink]="['/tags/'+repo?.name]">{{'COMMON.TAGS' | translate}}</ion-button></div>
 
                     </ion-card-content>
                     <ion-ripple-effect></ion-ripple-effect>
@@ -110,7 +115,6 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 export class SearchPage {
 
   @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
-  @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
 
@@ -131,7 +135,7 @@ export class SearchPage {
     filter(([name, page, userName]) => !!name || !!userName),
     tap(([name, page, userName]) => {
       if(!!name) this.store.dispatch(ReposActions.loadRepos({name, page:page.toString()}))
-      else if(!!userName) this.store.dispatch(ReposActions.loadRepos({name: userName, page:page.toString()}))
+      // else if(!!userName) this.store.dispatch(ReposActions.loadRepos({name: userName, page:page.toString()}))
     }),
     switchMap(() =>
       this.store.pipe(select(fromRepos.getRepos))
@@ -140,9 +144,9 @@ export class SearchPage {
   );
 
 
-  constructor(private store: Store) {
+  constructor(private store: Store, public platform: Platform) {
     // this.respos$.subscribe(data => console.log(data))
-   }
+  }
 
 
   //FORMULARIO
@@ -152,6 +156,7 @@ export class SearchPage {
     this.infiniteScroll$.next(1);
     this.page = 1
     this.formResult$.next(this.search.value);
+    if(!this.platform.is('mobileweb')) Keyboard.hide();
     this.showFormresult = true
   }
 
@@ -159,11 +164,11 @@ export class SearchPage {
   doRefresh(event) {
     setTimeout(() => {
       this.store.dispatch(ReposActions.deleteRepos());
-      this.formResult$.next('');
+      this.search.reset()
       this.infiniteScroll$.next(1);
+      this.formResult$.next(' ');
       this.page = 1
       this.showFormresult = false
-      this.search.reset()
       event.target.complete();
     }, 500);
   }
@@ -179,10 +184,6 @@ export class SearchPage {
       this.infiniteScroll$.next(this.page)
       event.target.complete();
     }, 500);
-  }
-
-  scrollToTop() {
-    this.content.scrollToTop();
   }
 
   getUserInfo(data: any): any{

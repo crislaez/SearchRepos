@@ -17,7 +17,7 @@ export class ReposService {
 
 
   getRepos(name?:string, page?:string): Observable<any>{
-    // 'https://api.github.com/users/crislaez/repos?page=2&per_page=100'
+     //'https://api.github.com/users/crislaez/repos?page=2&per_page=100'
      return this.http.get(`${this.baseURL}users/${name}/repos?page=${page}&per_page=${this.perPage}`, {observe: 'response'}).pipe(
       // tap(data => {
       //   // console.log(data)
