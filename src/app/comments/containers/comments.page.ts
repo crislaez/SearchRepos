@@ -4,10 +4,10 @@ import { Comment, CommentActions, fromComment } from '@clrepos/shared/comment';
 import { fromIssue } from '@clrepos/shared/issue';
 import { fromRepos } from '@clrepos/shared/repos';
 import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
-import { IonContent, IonInfiniteScroll } from '@ionic/angular';
+import { IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
-import { combineLatest, EMPTY, Observable } from 'rxjs';
-import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-comments',
@@ -16,13 +16,13 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
     <div class="container components-color">
 
       <ng-container *ngIf="comment$ | async as comments">
-        <ng-container *ngIf="!(pending$ | async); else loader">
+        <ng-container *ngIf="!(pending$ | async) || page > 1; else loader">
           <ng-container *ngIf="comments?.length > 0 ; else noData">
 
             <div class="header" no-border>
               <ng-container *ngIf="(title$ | async) as title">
                 <ion-back-button  (click)="back(title)" defaultHref=""  class="text-second-color" [text]="''"></ion-back-button>
-                <h1 class="capital-letter">{{'COMMON.COMMENTS' | translate}} {{title}}</h1>
+                <h1 class="capital-letter">{{'COMMON.COMMENTS_TITLE' | translate}} {{title}}</h1>
                 <div class="header-container-empty" ></div>
               </ng-container>
             </div>
@@ -56,7 +56,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
       <ng-template #noData>
         <div class="header" no-border>
           <ion-back-button defaultHref="../" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter">{{'COMMON.NO_ISSUE_TITLE' | translate}}</h1>
+          <h1 class="capital-letter">{{'COMMON.NO_COMMENT_TITLE' | translate}}</h1>
           <div class="header-container-empty" ></div>
         </div>
         <div class="error-serve">
@@ -77,7 +77,6 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 export class CommentsPage {
 
   @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
-  @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
 
@@ -85,15 +84,11 @@ export class CommentsPage {
 
   infiniteScroll$ = new EventEmitter();
   pending$: Observable<boolean> = this.store.pipe(select(fromComment.getPending));
-  totalPages$: Observable<number> = this.store.pipe(select(fromComment.getTotalPages));
   title$: Observable<string> = this.store.pipe(select(fromIssue.getRepoName));
 
-  comment$: Observable<Comment[]> = combineLatest([
-    this.route.params,
-    this.infiniteScroll$.pipe(startWith(1))
-  ]).pipe(
-    filter( ([{issueNumber}, page]) => !!issueNumber),
-    switchMap( ([{issueNumber}, page]) =>
+  comment$: Observable<Comment[]> = this.route.params.pipe(
+    filter( ({issueNumber}) => !!issueNumber),
+    switchMap( ({issueNumber}) =>
       this.store.pipe(select(fromIssue.getRepoName),
         switchMap( (repoName) =>
           this.store.pipe(select(fromRepos.getUserName),
@@ -105,7 +100,7 @@ export class CommentsPage {
               return userName
             }),
             filter( (userName) => !!issueNumber && !!repoName),
-            tap((userName: any) => this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber, page:page.toString()})) ),
+            tap((userName: any) => this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber})) ),
             switchMap(() => this.store.pipe(select(fromComment.getComments)))
           )
         )
@@ -117,6 +112,7 @@ export class CommentsPage {
   constructor(private store: Store, private route: ActivatedRoute, private router: Router) {
     // this.comment$.subscribe(data => console.log(data))
   }
+
 
   back(title: string): void{
     this.store.dispatch(CommentActions.deleteComments())

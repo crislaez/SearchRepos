@@ -22,15 +22,15 @@ export const getPending = createSelector(
   fromComment.getPending
 );
 
-export const getPage = createSelector(
-  getCommentState,
-  fromComment.getPage
-);
+// export const getPage = createSelector(
+//   getCommentState,
+//   fromComment.getPage
+// );
 
-export const getTotalPages = createSelector(
-  getCommentState,
-  fromComment.getTotalPages
-);
+// export const getTotalPages = createSelector(
+//   getCommentState,
+//   fromComment.getTotalPages
+// );
 
 // export const getIssue = (idIssue:string) => createSelector(
 //   getIssues,

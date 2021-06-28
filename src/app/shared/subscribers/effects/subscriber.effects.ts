@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { TagActions } from '../actions';
-import { TagService } from '../services/tag.service';
+import { SubscriberActions } from '../actions';
+import { SubscriberService } from '../services/subscriber.service';
 
 
 @Injectable()
-export class TagsEffects {
+export class SubscriberEffects {
 
 
   loadTags$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TagActions.loadTags),
+      ofType(SubscriberActions.loadSubscribers),
       switchMap(({userName, repoName, page}) =>
-        this._tag.getTags(userName, repoName, page).pipe(
-          // tap(({page, tags, total_pages}) => console.log(tags)),
-          map(({page, tags, total_pages}) => TagActions.saveTags({repoName, tags: tags || [], page: page || 1, total_pages: total_pages || 1}) ),
+        this._subscriber.getSubscribers(userName, repoName, page).pipe(
+          // tap(({page, subscribers, total_pages}) => console.log(subscribers)),
+          map(({page, subscribers, total_pages}) => SubscriberActions.saveSubscribers({repoName, subscribers: subscribers || [], page: page || 1, total_pages: total_pages || 1}) ),
           catchError((error) => {
             console.log(error)
-            return [TagActions.saveTags({repoName, tags: [], page: 1, total_pages: 1}) ]
+            return [SubscriberActions.saveSubscribers({repoName, subscribers: [], page: 1, total_pages: 1}) ]
           })
         )
       )
@@ -26,10 +26,10 @@ export class TagsEffects {
   );
 
   // loadReposInit$ = createEffect(() =>
-  //   of(TagActions.loadRepos({name: 'CrisLaez', page: '1'}))
+  //   of(SubscriberActions.loadRepos({name: 'CrisLaez', page: '1'}))
   // );
 
-  constructor(private _tag: TagService, private actions$: Actions){}
+  constructor(private _subscriber: SubscriberService, private actions$: Actions){}
 }
 // <https://api.github.com/user/51215457/repos?page=3&per_page=15>; rel="prev",
 // <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="next",

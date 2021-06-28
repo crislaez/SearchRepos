@@ -19,6 +19,10 @@ const routes: Routes = [
     loadChildren: () => import('./tags/tags.module').then( m => m.TagsPageModule)
   },
   {
+    path: 'subscribers',
+    loadChildren: () => import('./subscribers/subscribers.module').then( m => m.SubscribersPageModule)
+  },
+  {
     path: '**',
     redirectTo: 'search',
     pathMatch: 'full',

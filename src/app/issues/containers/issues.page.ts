@@ -1,14 +1,13 @@
-import { Component, ChangeDetectionStrategy, EventEmitter, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromIssue, Issue } from '@clrepos/shared/issue';
 import { IssueActions } from '@clrepos/shared/issue/actions';
 import { fromRepos } from '@clrepos/shared/repos';
-import { IonInfiniteScroll, IonContent } from '@ionic/angular';
+import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
+import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
-import { EMPTY, Observable, combineLatest } from 'rxjs';
-import { filter, tap, switchMap, map, startWith } from 'rxjs/operators';
-import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
-import { CommentActions } from '@clrepos/shared/comment';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
+import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-issues',
@@ -17,7 +16,7 @@ import { CommentActions } from '@clrepos/shared/comment';
     <div class="container components-color">
 
       <ng-container *ngIf="(issues$ | async) as isssues">
-        <ng-container *ngIf="!(pending$ | async); else loader">
+        <ng-container *ngIf="!(pending$ | async) || page > 1; else loader">
           <ng-container *ngIf="isssues?.length > 0 ; else noData">
 
             <div class="header" no-border>
@@ -53,7 +52,7 @@ import { CommentActions } from '@clrepos/shared/comment';
                   <div class="width-half margin-top-10">{{'COMMON.AUTHOR_ASSOCIATION' | translate}}:</div>
                   <div class="width-half margin-top-10">{{issue?.author_association}}</div>
 
-                  <div class="width-half margin-top-10">{{'COMMON.COMMENTS' | translate}}:</div>
+                  <div class="width-half margin-top-10">{{'COMMON.COMMENTS_TITLE' | translate}}:</div>
                   <div class="width-half margin-top-10">{{issue?.comments}}</div>
 
                   <ng-container *ngIf="issue?.labels?.length > 0">
@@ -64,18 +63,20 @@ import { CommentActions } from '@clrepos/shared/comment';
 
                 <div class="font-small margin-top-10"><a [href]="issue?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
 
-                <div class="font-small margin-top-10" *ngIf="issue?.comments > 0"><ion-button color="primary" class="font-small" (click)="saveCommentTotalPage(issue?.comments)" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div>
+                <div class="font-small margin-top-10" *ngIf="issue?.comments > 0"><ion-button color="primary" class="font-small"  [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div>
               </ion-card-content>
 
               <ion-ripple-effect></ion-ripple-effect>
             </ion-card>
 
+            <!-- INFINITE SCROLL  -->
             <ng-container *ngIf="(totalPages$ | async) as total">
               <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
                 <ion-infinite-scroll-content loadingSpinner="crescent" color="primary">
                 </ion-infinite-scroll-content>
               </ion-infinite-scroll>
             </ng-container>
+
           </ng-container>
         </ng-container>
       </ng-container>
@@ -103,14 +104,14 @@ import { CommentActions } from '@clrepos/shared/comment';
   styleUrls: ['./issues.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IssuesPage {
+export class IssuesPage implements OnInit {
 
   @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
   @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
 
-  title: any;
+  title: string = '';
   page: number = 1;
 
   infiniteScroll$ = new EventEmitter();
@@ -135,9 +136,7 @@ export class IssuesPage {
         tap((userName: any) => {
           this.store.dispatch(IssueActions.loadIssues({userName, repoName, page: page.toString()}))
         }),
-        switchMap(() =>
-          this.store.pipe(select(fromIssue.getIssues))
-        )
+        switchMap(() => this.store.pipe(select(fromIssue.getIssues)))
       )
     )
   );
@@ -146,6 +145,7 @@ export class IssuesPage {
   constructor(private route: ActivatedRoute, private store: Store, private router: Router) {
     // this.issues$.subscribe(data => console.log(data))
   }
+
 
   ngOnInit(): void{
     this.title = this.route.snapshot.params.repoName
@@ -159,7 +159,7 @@ export class IssuesPage {
   loadData(event, total) {
     setTimeout(() => {
       this.page = this.page + 1;
-      if(this.page > total){
+      if(this.page >= total){
         this.ionInfiniteScroll.disabled = true
         return
       }
@@ -168,8 +168,5 @@ export class IssuesPage {
     }, 500);
   }
 
-  saveCommentTotalPage(total_pages:number): void{
-    this.store.dispatch(CommentActions.saveCommentsTotalPages({total_pages}))
-  }
 
 }

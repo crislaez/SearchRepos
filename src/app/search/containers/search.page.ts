@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Keyboard } from '@capacitor/keyboard';
 import { fromRepos, Repo, ReposActions } from '@clrepos/shared/repos';
 import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
-import { IonInfiniteScroll } from '@ionic/angular';
+import { IonContent, IonInfiniteScroll, Platform } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
-import { Keyboard } from '@capacitor/keyboard';
-import { Platform } from '@ionic/angular';
-
+import { startWith, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search',
@@ -24,12 +22,12 @@ import { Platform } from '@ionic/angular';
           </div>
 
           <ng-container *ngIf="(respos$ | async) as respos">
-            <ng-container *ngIf="!(pending$ | async); else loader">
-              <ng-container *ngIf="showFormresult; else searchMessage">
+            <ng-container *ngIf="!(pending$ | async) || page > 1; else loader">
+              <ng-container  *ngIf="showFormresult; else searchMessage">
                 <ng-container *ngIf="respos?.length > 0 ; else noData">
 
-                  <ion-card *ngIf="getUserInfo(respos) as user" class="ion-activatable ripple-parent fade-in-card width-90">
-                      <img [src]="user?.avatar_url" (error)="errorImage($event)">
+                  <ion-card *ngIf="getUserInfo(respos) as user" class="ion-activatable ripple-parent fade-in-card">
+                    <img [src]="user?.avatar_url" (error)="errorImage($event)">
                     <ion-card-header>
                       <ion-card-title class="text-color">{{user?.login }}</ion-card-title>
                     </ion-card-header>
@@ -56,15 +54,32 @@ import { Platform } from '@ionic/angular';
                         <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.OPEN_ISSUES' | translate}}:</div>
                         <div class="width-half capital-letter font-small margin-top-10">{{repo?.open_issues}}</div>
 
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.CREATE' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">{{repo?.created_at  | date}}</div>
+
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.UPDATE' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">{{repo?.updated_at | date}}</div>
+
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.PUSHED' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">{{repo?.pushed_at | date}}</div>
+
+                        <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.LICENCE' | translate}}:</div>
+                        <div class="width-half capital-letter font-small margin-top-10">
+                          <ng-container *ngIf="repo?.license?.name; else noLicence">{{repo?.license?.name}}</ng-container>
+                          <ng-template #noLicence> - </ng-template>
+                        </div>
+
                         <div class="width-half capital-letter font-small margin-top-10">{{'COMMON.PRIVATE' | translate}}:</div>
                         <div class="width-half capital-letter font-small margin-top-10">
                           <ng-container *ngIf="repo?.private; else noPrivate">{{'COMMON.YES' | translate}}</ng-container>
                           <ng-template #noPrivate>{{'COMMON.NO' | translate}}</ng-template>
                         </div>
                       </div>
+
                       <div class="font-small margin-top-10"><a [href]="repo?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
                       <div class="font-small margin-top-10" *ngIf="repo?.open_issues > 0"><ion-button color="primary" class="font-small" [routerLink]="['/issues/'+repo?.name]">{{'COMMON.SEE_ISSUES' | translate}}</ion-button></div>
-                      <div class="font-small margin-top-10" *ngIf="repo?.open_issues > 0"><ion-button color="primary" class="font-small" [routerLink]="['/tags/'+repo?.name]">{{'COMMON.TAGS' | translate}}</ion-button></div>
+                      <div class="font-small margin-top-10"><ion-button color="primary" class="font-small" [routerLink]="['/tags/'+repo?.name]">{{'COMMON.TAGS' | translate}}</ion-button></div>
+                      <div class="font-small margin-top-10"><ion-button color="primary" class="font-small" [routerLink]="['/subscribers/'+repo?.name]">{{'COMMON.SUNBSCRIBERS' | translate}}</ion-button></div>
 
                     </ion-card-content>
                     <ion-ripple-effect></ion-ripple-effect>
@@ -115,6 +130,7 @@ import { Platform } from '@ionic/angular';
 export class SearchPage {
 
   @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
 
@@ -132,15 +148,12 @@ export class SearchPage {
     this.infiniteScroll$.pipe(startWith(1)),
     this.store.pipe(select(fromRepos.getUserName))
   ]).pipe(
-    filter(([name, page, userName]) => !!name || !!userName),
+    // filter(([name, page, userName]) => !!name || !!userName),
     tap(([name, page, userName]) => {
       if(!!name) this.store.dispatch(ReposActions.loadRepos({name, page:page.toString()}))
       // else if(!!userName) this.store.dispatch(ReposActions.loadRepos({name: userName, page:page.toString()}))
     }),
-    switchMap(() =>
-      this.store.pipe(select(fromRepos.getRepos))
-    ),
-    shareReplay(1)
+    switchMap(() => this.store.pipe(select(fromRepos.getRepos)))
   );
 
 
@@ -177,10 +190,12 @@ export class SearchPage {
   loadData(event, total) {
     setTimeout(() => {
       this.page = this.page + 1;
-      if(this.page > total){
+      if(this.page >= total){
         this.ionInfiniteScroll.disabled = true
         return
       }
+      // console.log(this.content.scrollByPoint)
+      // console.log(this.content.scrollX)
       this.infiniteScroll$.next(this.page)
       event.target.complete();
     }, 500);

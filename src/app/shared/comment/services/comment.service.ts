@@ -4,14 +4,13 @@ import { Observable, throwError } from 'rxjs';
 import { CoreConfigService } from '../../../core/services/core-config.service';
 import { catchError, map, tap } from 'rxjs/operators';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
 
   baseURL:string = `${this._coreConfig.getEndpoint()}`;
-  perPage:string = '15';
+  perPage:string = '100';
 
 
   constructor(private http: HttpClient, private _coreConfig: CoreConfigService) { }

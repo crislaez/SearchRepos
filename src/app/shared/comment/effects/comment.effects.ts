@@ -14,10 +14,10 @@ export class CommentEffects {
       ofType(CommentActions.loadComments),
       switchMap(({userName, repoName, issueNumber, page}) =>
         this._comment.getComment(userName, repoName, issueNumber, page).pipe(
-          map(({comment}) => CommentActions.saveComments({comment: comment || [], page: Number(page) }) ),
+          map(({comment}) => CommentActions.saveComments({comment: comment || []}) ),
           catchError((error) => {
             console.log(error)
-            return [CommentActions.saveComments({comment: [], page: 1}) ]
+            return [CommentActions.saveComments({comment: []}) ]
           })
         )
       )
