@@ -25,7 +25,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
               <div class="header-container-empty" ></div>
             </div>
 
-            <ion-card class="ion-activatable ripple-parent fade-in-card" *ngFor="let issue of isssues; trackBy: trackById" >
+            <ion-card class="fade-in-card" *ngFor="let issue of isssues; trackBy: trackById" >
               <ion-card-header>
                 <ion-card-title class="text-color capital-letter">{{issue?.title }}</ion-card-title>
               </ion-card-header>
@@ -66,7 +66,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
                 <div class="font-small margin-top-10" *ngIf="issue?.comments > 0"><ion-button color="primary" class="font-small"  [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div>
               </ion-card-content>
 
-              <ion-ripple-effect></ion-ripple-effect>
+              <!-- <ion-ripple-effect></ion-ripple-effect> -->
             </ion-card>
 
             <!-- INFINITE SCROLL  -->
@@ -161,7 +161,6 @@ export class IssuesPage implements OnInit {
       this.page = this.page + 1;
       if(this.page >= total){
         this.ionInfiniteScroll.disabled = true
-        return
       }
       this.infiniteScroll$.next(this.page)
       event.target.complete();

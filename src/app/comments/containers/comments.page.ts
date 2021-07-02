@@ -27,7 +27,7 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
               </ng-container>
             </div>
 
-            <ion-card class="ion-activatable ripple-parent fade-in-card" *ngFor="let comment of comments; trackBy: trackById" >
+            <ion-card class="fade-in-card" *ngFor="let comment of comments; trackBy: trackById" >
               <ion-card-header>
                 <ion-card-title class="text-color capital-letter">{{comment?.user?.login }}</ion-card-title>
               </ion-card-header>
@@ -45,7 +45,7 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
                 <div class="font-small margin-top-10"><a [href]="comment?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
               </ion-card-content>
 
-              <ion-ripple-effect></ion-ripple-effect>
+              <!-- <ion-ripple-effect></ion-ripple-effect> -->
             </ion-card>
 
           </ng-container>

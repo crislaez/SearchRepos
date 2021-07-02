@@ -521,8 +521,8 @@ ion-card{
 
 .fade-in-card {
   animation: fadeIn 2s;
-  animation: fadeInUp 1s;
-  animation: scale 0.5s;
+  animation: fadeInUp 0.4s;
+  // animation: scale 0.3s;
 }
 
 @keyframes fadeIn {
@@ -531,8 +531,8 @@ ion-card{
 }
 
 @keyframes fadeInUp {
-  0% {transform:translateY(60px);}
-  100% {transform:translateY(0px);}
+  0% {transform:translateY(60px) scale(0.5,0.5);}
+  100% {transform:translateY(0px) scale(1,1);}
 }
 
 @keyframes scale {

@@ -24,7 +24,7 @@ import { fromRepos } from '@clrepos/shared/repos';
             <div class="header-container-empty" ></div>
           </div>
 
-          <ion-card class="ion-activatable ripple-parent fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
+          <ion-card class="fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
             <ion-card-header>
               <ion-card-title class="text-color capital-letter">{{tag?.name }}</ion-card-title>
             </ion-card-header>
@@ -37,7 +37,7 @@ import { fromRepos } from '@clrepos/shared/repos';
               <!-- <div class="font-small margin-top-10" *ngIf="tag?.comments > 0"><ion-button color="primary" class="font-small" (click)="saveCommentTotalPage(tag?.comments)" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div> -->
             </ion-card-content>
 
-            <ion-ripple-effect></ion-ripple-effect>
+            <!-- <ion-ripple-effect></ion-ripple-effect> -->
           </ion-card>
 
           <!-- INFINITE SCROLL  -->
@@ -126,7 +126,6 @@ export class TagsPage implements OnInit {
       this.page = this.page + 1;
       if(this.page >= total){
         this.ionInfiniteScroll.disabled = true
-        return
       }
       this.infiniteScroll$.next(this.page)
       event.target.complete();

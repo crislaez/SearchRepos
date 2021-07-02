@@ -6,7 +6,7 @@ import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
 import { IonContent, IonInfiniteScroll, Platform } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
-import { startWith, switchMap, tap } from 'rxjs/operators';
+import { shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search',
@@ -26,7 +26,7 @@ import { startWith, switchMap, tap } from 'rxjs/operators';
               <ng-container  *ngIf="showFormresult; else searchMessage">
                 <ng-container *ngIf="respos?.length > 0 ; else noData">
 
-                  <ion-card *ngIf="getUserInfo(respos) as user" class="ion-activatable ripple-parent fade-in-card">
+                  <ion-card *ngIf="getUserInfo(respos) as user" class="fade-in-card">
                     <img [src]="user?.avatar_url" (error)="errorImage($event)">
                     <ion-card-header>
                       <ion-card-title class="text-color">{{user?.login }}</ion-card-title>
@@ -36,7 +36,7 @@ import { startWith, switchMap, tap } from 'rxjs/operators';
                     </ion-card-content>
                   </ion-card>
 
-                  <ion-card class="ion-activatable ripple-parent fade-in-card" *ngFor="let repo of respos; trackBy: trackById" >
+                  <ion-card class="fade-in-card" *ngFor="let repo of respos; trackBy: trackById" >
                     <ion-card-header>
                       <ion-card-title class="text-color">{{repo?.name }}</ion-card-title>
                     </ion-card-header>
@@ -82,7 +82,7 @@ import { startWith, switchMap, tap } from 'rxjs/operators';
                       <div class="font-small margin-top-10"><ion-button color="primary" class="font-small" [routerLink]="['/subscribers/'+repo?.name]">{{'COMMON.SUNBSCRIBERS' | translate}}</ion-button></div>
 
                     </ion-card-content>
-                    <ion-ripple-effect></ion-ripple-effect>
+                    <!-- <ion-ripple-effect></ion-ripple-effect> -->
                   </ion-card>
 
                   <ng-container *ngIf="(totalPages$ | async) as total">
@@ -148,10 +148,8 @@ export class SearchPage {
     this.infiniteScroll$.pipe(startWith(1)),
     this.store.pipe(select(fromRepos.getUserName))
   ]).pipe(
-    // filter(([name, page, userName]) => !!name || !!userName),
     tap(([name, page, userName]) => {
       if(!!name) this.store.dispatch(ReposActions.loadRepos({name, page:page.toString()}))
-      // else if(!!userName) this.store.dispatch(ReposActions.loadRepos({name: userName, page:page.toString()}))
     }),
     switchMap(() => this.store.pipe(select(fromRepos.getRepos)))
   );
@@ -192,10 +190,7 @@ export class SearchPage {
       this.page = this.page + 1;
       if(this.page >= total){
         this.ionInfiniteScroll.disabled = true
-        return
       }
-      // console.log(this.content.scrollByPoint)
-      // console.log(this.content.scrollX)
       this.infiniteScroll$.next(this.page)
       event.target.complete();
     }, 500);

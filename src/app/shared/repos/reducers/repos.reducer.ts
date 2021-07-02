@@ -26,7 +26,17 @@ const initialState: State = {
 const reposReducer = createReducer(
   initialState,
   on(ReposActions.loadRepos, (state) => ({...state, pending: true})),
-  on(ReposActions.saveRepos, (state, { usserName, repos, page, total_pages }) => ({...state, usserName, repos:[...state.repos, ...repos], page, total_pages, pending: false })),
+  on(ReposActions.saveRepos, (state, { usserName, repos, page, total_pages }) => {
+    const reducersRepos = [...state.repos]
+    let ids = reducersRepos?.map(({id}) => id)
+    let result = [...reducersRepos, ...(repos || []).filter(item => !ids.includes(item?.id))]
+    return {...state,
+      usserName,
+      repos:[...result],
+      page,
+      total_pages, pending: false
+    }
+  }),
   on(ReposActions.deleteRepos, (state) => ({...state, repos:[], page:1, total_pages:1, usserName:'', pending: false }) ),
 
 );

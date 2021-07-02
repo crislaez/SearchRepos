@@ -26,7 +26,7 @@ import { fromSubscriber, SubscriberActions } from '@clrepos/shared/subscribers';
               <div class="header-container-empty" ></div>
             </div>
 
-            <ion-card class="ion-activatable ripple-parent fade-in-card" *ngFor="let subscriber of subscribers; trackBy: trackById" >
+            <ion-card class="fade-in-card" *ngFor="let subscriber of subscribers; trackBy: trackById" >
               <img [src]="subscriber?.avatar_url" (error)="errorImage($event)">
               <ion-card-header>
                 <ion-card-title class="text-color capital-letter">{{subscriber?.login }}</ion-card-title>
@@ -41,7 +41,7 @@ import { fromSubscriber, SubscriberActions } from '@clrepos/shared/subscribers';
               <div class="font-small margin-top-10"><a [href]="subscriber?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
               </ion-card-content>
 
-              <ion-ripple-effect></ion-ripple-effect>
+              <!-- <ion-ripple-effect></ion-ripple-effect> -->
             </ion-card>
 
             <!-- INFINITE SCROLL  -->
@@ -130,7 +130,6 @@ export class SubscribersPage implements OnInit {
       this.page = this.page + 1;
       if(this.page >= total){
         this.ionInfiniteScroll.disabled = true
-        return
       }
       this.infiniteScroll$.next(this.page)
       event.target.complete();
