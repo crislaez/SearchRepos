@@ -5,13 +5,13 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { fromTag, Tag, TagActions } from '@clrepos/shared/tag';
-import { trackById, errorImage } from '@clrepos/shared/shared/utils/utils';
+import { trackById, errorImage, gotToTop } from '@clrepos/shared/shared/utils/utils';
 import { fromRepos } from '@clrepos/shared/repos';
 
 @Component({
   selector: 'app-tags',
   template: `
-  <ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
     <div class="container components-color">
 
     <ng-container *ngIf="(tags$ | async) as tags">
@@ -43,7 +43,7 @@ import { fromRepos } from '@clrepos/shared/repos';
           <!-- INFINITE SCROLL  -->
           <ng-container *ngIf="(totalPages$ | async) as total">
             <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-              <ion-infinite-scroll-content loadingSpinner="crescent" color="primary">
+              <ion-infinite-scroll-content loadingSpinner="crescent" color="primary" class="loadingspinner">
               </ion-infinite-scroll-content>
             </ion-infinite-scroll>
           </ng-container>
@@ -66,9 +66,14 @@ import { fromRepos } from '@clrepos/shared/repos';
 
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner color="primary"></ion-spinner>
+        <ion-spinner color="primary" class="loadingspinner"></ion-spinner>
       </ng-template>
     </div>
+
+    <ion-fab *ngIf="showButton" vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button class="color-button color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
+    </ion-fab>
+
   </ion-content >
   `,
   styleUrls: ['./tags.page.scss'],
@@ -80,9 +85,10 @@ export class TagsPage implements OnInit {
   @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
-
+  gotToTop = gotToTop;
   title: string = ''
   page: number = 1;
+  showButton: boolean = false;
 
   infiniteScroll$ = new EventEmitter();
   pending$: Observable<boolean> = this.store.pipe(select(fromTag.getPending));
@@ -136,4 +142,12 @@ export class TagsPage implements OnInit {
   back(): void{
     this.store.dispatch(TagActions.deleteTags())
   }
+
+  // SCROLL EVENT
+  logScrolling({detail:{scrollTop}}): void{
+    if(scrollTop >= 300) this.showButton = true
+    else this.showButton = false
+  }
+
+
 }

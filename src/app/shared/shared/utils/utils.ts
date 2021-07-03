@@ -1,3 +1,5 @@
+import { IonContent } from "@ionic/angular";
+
 export const trackById = (_: number, item: any): number => {
   return item.id;
 }
@@ -22,3 +24,6 @@ export const getResponseInfo = (link:string, toSplit:string ='next', actualPage:
   return Number(result)
 }
 
+export const gotToTop = (content: IonContent): void => {
+  content.scrollToTop(500);
+}

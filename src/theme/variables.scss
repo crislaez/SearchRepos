@@ -246,6 +246,7 @@
 
 $backColor: #161B22;
 $textColor: white;
+$primary: #3880ff;
 
 // REFRES ITEM
 ion-refresher {
@@ -523,6 +524,10 @@ ion-card{
   animation: fadeIn 2s;
   animation: fadeInUp 0.4s;
   // animation: scale 0.3s;
+}
+
+.loadingspinner{
+  --color : $primary;
 }
 
 @keyframes fadeIn {

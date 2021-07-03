@@ -3,16 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Comment, CommentActions, fromComment } from '@clrepos/shared/comment';
 import { fromIssue } from '@clrepos/shared/issue';
 import { fromRepos } from '@clrepos/shared/repos';
-import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
+import { errorImage, trackById, gotToTop } from '@clrepos/shared/shared/utils/utils';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { EMPTY, Observable } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-comments',
   template: `
-  <ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
     <div class="container components-color">
 
       <ng-container *ngIf="comment$ | async as comments">
@@ -66,9 +67,14 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner color="primary"></ion-spinner>
+        <ion-spinner color="primary" class="loadingspinner"></ion-spinner>
       </ng-template>
     </div>
+
+    <ion-fab *ngIf="showButton" vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button class="color-button color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
+    </ion-fab>
+
   </ion-content >
   `,
   styleUrls: ['./comments.page.scss'],
@@ -77,10 +83,12 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 export class CommentsPage {
 
   @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
-
+  gotToTop = gotToTop;
   page: number = 1;
+  showButton: boolean = false;
 
   infiniteScroll$ = new EventEmitter();
   pending$: Observable<boolean> = this.store.pipe(select(fromComment.getPending));
@@ -119,6 +127,10 @@ export class CommentsPage {
     this.router.navigate(['/issues/'+title])
   }
 
-
+  // SCROLL EVENT
+  logScrolling({detail:{scrollTop}}): void{
+    if(scrollTop >= 300) this.showButton = true
+    else this.showButton = false
+  }
 
 }

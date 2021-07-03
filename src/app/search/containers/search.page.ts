@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild } from '@an
 import { FormControl } from '@angular/forms';
 import { Keyboard } from '@capacitor/keyboard';
 import { fromRepos, Repo, ReposActions } from '@clrepos/shared/repos';
-import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
+import { errorImage, trackById, gotToTop } from '@clrepos/shared/shared/utils/utils';
 import { IonContent, IonInfiniteScroll, Platform } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
@@ -11,13 +11,13 @@ import { shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 @Component({
   selector: 'app-search',
   template:`
-    <ion-content [fullscreen]="true">
+    <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
       <div class="container components-color">
 
           <!-- HEADER  -->
           <div class="header fade-in-card" no-border>
             <form class="form" (submit)="searchSubmit($event)">
-              <ion-searchbar color="light" [placeholder]="'COMMON.SEARCH' | translate" [formControl]="search"></ion-searchbar>
+              <ion-searchbar color="light" [placeholder]="'COMMON.SEARCH' | translate" [formControl]="search" (ionClear)="clearSearch($event)"></ion-searchbar>
             </form>
           </div>
 
@@ -87,7 +87,7 @@ import { shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
                   <ng-container *ngIf="(totalPages$ | async) as total">
                     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-                      <ion-infinite-scroll-content loadingSpinner="crescent" color="primary">
+                      <ion-infinite-scroll-content loadingSpinner="crescent" color="primary" class="loadingspinner">
                       </ion-infinite-scroll-content>
                     </ion-infinite-scroll>
                   </ng-container>
@@ -118,10 +118,15 @@ import { shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
           <!-- LOADER  -->
           <ng-template #loader>
-            <ion-spinner color="primary"></ion-spinner>
+            <ion-spinner color="primary" class="loadingspinner"></ion-spinner>
           </ng-template>
 
       </div>
+
+      <ion-fab *ngIf="showButton" vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button class="color-button color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
+      </ion-fab>
+
     </ion-content >
   `,
   styleUrls: ['./search.page.scss'],
@@ -133,10 +138,12 @@ export class SearchPage {
   @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
+  gotToTop = gotToTop;
 
   showFormresult:boolean = false;
   search = new FormControl('');
   page: number = 1;
+  showButton: boolean = false;
 
   formResult$ = new EventEmitter();
   infiniteScroll$ = new EventEmitter();
@@ -164,11 +171,17 @@ export class SearchPage {
   searchSubmit(event: Event): void{
     event.preventDefault();
     this.store.dispatch(ReposActions.deleteRepos());
-    this.infiniteScroll$.next(1);
-    this.page = 1
     this.formResult$.next(this.search.value);
     if(!this.platform.is('mobileweb')) Keyboard.hide();
+    this.clearAll();
     this.showFormresult = true
+  }
+
+  // DELETE SEARCH
+  clearSearch(event): void{
+    if(!this.platform.is('mobileweb')) Keyboard.hide();
+    this.formResult$.next('');
+    this.clearAll();
   }
 
   // REFRES
@@ -176,10 +189,10 @@ export class SearchPage {
     setTimeout(() => {
       this.store.dispatch(ReposActions.deleteRepos());
       this.search.reset()
-      this.infiniteScroll$.next(1);
       this.formResult$.next(' ');
-      this.page = 1
       this.showFormresult = false
+      this.clearAll();
+
       event.target.complete();
     }, 500);
   }
@@ -189,9 +202,10 @@ export class SearchPage {
     setTimeout(() => {
       this.page = this.page + 1;
       if(this.page >= total){
-        this.ionInfiniteScroll.disabled = true
+        if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true
       }
-      this.infiniteScroll$.next(this.page)
+      this.infiniteScroll$.next(this.page);
+
       event.target.complete();
     }, 500);
   }
@@ -200,5 +214,16 @@ export class SearchPage {
     return data?.length > 0 && !!data?.[0]?.owner ? data?.[0]?.owner : {}
   }
 
+  clearAll(): void{
+    this.page = 1
+    this.infiniteScroll$.next(this.page)
+    if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = false
+  }
+
+  // SCROLL EVENT
+  logScrolling({detail:{scrollTop}}): void{
+    if(scrollTop >= 300) this.showButton = true
+    else this.showButton = false
+  }
 
 }

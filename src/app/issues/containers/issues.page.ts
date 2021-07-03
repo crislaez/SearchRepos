@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { fromIssue, Issue } from '@clrepos/shared/issue';
 import { IssueActions } from '@clrepos/shared/issue/actions';
 import { fromRepos } from '@clrepos/shared/repos';
-import { errorImage, trackById } from '@clrepos/shared/shared/utils/utils';
+import { errorImage, trackById, gotToTop } from '@clrepos/shared/shared/utils/utils';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, EMPTY, Observable } from 'rxjs';
@@ -12,7 +12,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 @Component({
   selector: 'app-issues',
   template: `
-  <ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
     <div class="container components-color">
 
       <ng-container *ngIf="(issues$ | async) as isssues">
@@ -72,7 +72,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
             <!-- INFINITE SCROLL  -->
             <ng-container *ngIf="(totalPages$ | async) as total">
               <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-                <ion-infinite-scroll-content loadingSpinner="crescent" color="primary">
+                <ion-infinite-scroll-content loadingSpinner="crescent" color="primary" class="loadingspinner">
                 </ion-infinite-scroll-content>
               </ion-infinite-scroll>
             </ng-container>
@@ -96,9 +96,14 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner color="primary"></ion-spinner>
+        <ion-spinner color="primary" class="loadingspinner"></ion-spinner>
       </ng-template>
     </div>
+
+    <ion-fab *ngIf="showButton" vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button class="color-button color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
+    </ion-fab>
+
   </ion-content >
   `,
   styleUrls: ['./issues.page.scss'],
@@ -110,9 +115,10 @@ export class IssuesPage implements OnInit {
   @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
-
+  gotToTop = gotToTop;
   title: string = '';
   page: number = 1;
+  showButton: boolean = false;
 
   infiniteScroll$ = new EventEmitter();
   pending$: Observable<boolean> = this.store.pipe(select(fromIssue.getPending));
@@ -165,6 +171,12 @@ export class IssuesPage implements OnInit {
       this.infiniteScroll$.next(this.page)
       event.target.complete();
     }, 500);
+  }
+
+  // SCROLL EVENT
+  logScrolling({detail:{scrollTop}}): void{
+    if(scrollTop >= 300) this.showButton = true
+    else this.showButton = false
   }
 
 
