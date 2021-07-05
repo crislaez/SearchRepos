@@ -180,6 +180,7 @@ export class SearchPage {
   // DELETE SEARCH
   clearSearch(event): void{
     if(!this.platform.is('mobileweb')) Keyboard.hide();
+    this.search.reset();
     this.formResult$.next('');
     this.clearAll();
   }
@@ -188,7 +189,7 @@ export class SearchPage {
   doRefresh(event) {
     setTimeout(() => {
       this.store.dispatch(ReposActions.deleteRepos());
-      this.search.reset()
+      this.search.reset();
       this.formResult$.next(' ');
       this.showFormresult = false
       this.clearAll();

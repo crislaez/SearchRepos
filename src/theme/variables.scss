@@ -248,6 +248,12 @@ $backColor: #161B22;
 $textColor: white;
 $primary: #3880ff;
 
+ion-infinite-scroll-content{
+  ion-spinner{
+    margin-top: 0;
+  }
+}
+
 // REFRES ITEM
 ion-refresher {
   // margin-top: 50px;
