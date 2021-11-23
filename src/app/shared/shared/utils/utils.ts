@@ -27,3 +27,10 @@ export const getResponseInfo = (link:string, toSplit:string ='next', actualPage:
 export const gotToTop = (content: IonContent): void => {
   content.scrollToTop(500);
 }
+
+export enum EntityStatus {
+  Initial = 'initial',
+  Pending = 'pending',
+  Loaded = 'loaded',
+  Error = 'error'
+};

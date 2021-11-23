@@ -1,32 +1,31 @@
 import { createReducer, on  } from '@ngrx/store';
-import { ReposActions } from '../actions';
+import * as  ReposActions from '../actions/repos.actions'
 import { Repo } from '../models';
+import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 
-// interface Status {
-//   pending?: boolean;
-//   error?: string;
-// }
+
+export const reposFeatureKey = 'repos';
 
 export interface State{
   repos?: Repo[];
   usserName?:string;
-  pending?: boolean;
+  status: EntityStatus;
   page?: number;
   total_pages?: number;
 }
 
 const initialState: State = {
+  status: EntityStatus.Initial,
   repos:[],
   usserName:'',
-  pending: false,
   page: 1,
   total_pages: 1,
 }
 
-const reposReducer = createReducer(
+export const reducer = createReducer(
   initialState,
-  on(ReposActions.loadRepos, (state) => ({...state, pending: true})),
-  on(ReposActions.saveRepos, (state, { usserName, repos, page, total_pages }) => {
+  on(ReposActions.loadRepos, (state) => ({...state, status: EntityStatus.Pending })),
+  on(ReposActions.saveRepos, (state, { usserName, repos, page, total_pages, status }) => {
     const reducersRepos = [...state.repos]
     let ids = reducersRepos?.map(({id}) => id)
     let result = [...reducersRepos, ...(repos || []).filter(item => !ids.includes(item?.id))]
@@ -34,20 +33,11 @@ const reposReducer = createReducer(
       usserName,
       repos:[...result],
       page,
-      total_pages, pending: false
+      total_pages,
+      status
     }
   }),
-  on(ReposActions.deleteRepos, (state) => ({...state, repos:[], page:1, total_pages:1, usserName:'', pending: false }) ),
+  on(ReposActions.deleteRepos, (state) => ({...state, repos:[], page:1, total_pages:1, usserName:'', status: EntityStatus.Loaded }) ),
 
 );
-
-export function reducer(state: State | undefined, action: ReposActions.ReposActionsUnion){
-  return reposReducer(state, action);
-}
-
-export const getRepos = (state: State) => state?.repos;
-export const getUserName = (state: State) => state?.usserName;
-export const getPending = (state: State) => state?.pending;
-export const getPage = (state: State) => state?.page;
-export const getTotalPages = (state: State) => state?.total_pages;
 
