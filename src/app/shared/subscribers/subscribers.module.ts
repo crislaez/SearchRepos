@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { SubscriberEffects } from './effects/subscriber.effects';
-import * as fromSubscriber from './reducers';
+import * as fromSubscriber from './reducers/subscriber.reducer';
 
 
 @NgModule({
@@ -14,7 +14,7 @@ import * as fromSubscriber from './reducers';
     CommonModule,
     FormsModule,
     IonicModule,
-    StoreModule.forFeature(fromSubscriber.subscriberKey, fromSubscriber.reducer),
+    StoreModule.forFeature(fromSubscriber.subscriberFeatureKey, fromSubscriber.reducer),
     EffectsModule.forFeature([SubscriberEffects])
   ]
 })

@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -14,6 +14,7 @@ import { RootComponent } from './core';
 import { CoreModule } from './core/core.module';
 import { ENVIRONMENT } from './core/externals';
 import { appInitTranslations, createTranslateLoader } from './core/i18n/utils/custom-18n-functions';
+import { DynamicLocaleId } from './core/i18n/utils/dynamic-locale-id.class';
 import { CoreConfigService } from './core/services/core-config.service';
 import { HttpErrorInterceptor } from './core/services/http-error.interceptor';
 
@@ -21,6 +22,12 @@ export function appInitializerFactory(translate: TranslateService, coreConfig: C
   coreConfig.importConfig(appConfig);
   return () => appInitTranslations(translate, appConfig.Languages, appConfig.DefaultLang);
 };
+
+export function localeIdFactory(translate: TranslateService): DynamicLocaleId {
+  return new DynamicLocaleId(translate);
+}
+
+
 
 @NgModule({
   entryComponents: [],
@@ -68,6 +75,11 @@ export function appInitializerFactory(translate: TranslateService, coreConfig: C
     {
       provide: ENVIRONMENT,
       useValue: environment
+    },
+    {
+      provide: LOCALE_ID,
+      useClass: DynamicLocaleId,
+      deps: [TranslateService]
     }
   ],
   bootstrap: [

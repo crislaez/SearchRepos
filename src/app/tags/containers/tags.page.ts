@@ -12,7 +12,7 @@ import { fromRepos } from '@clrepos/shared/repos';
   selector: 'app-tags',
   template: `
   <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
-    <div class="container components-color">
+    <div class="container components-color-second">
 
     <ng-container *ngIf="(tags$ | async) as tags">
       <ng-container *ngIf="!(pending$ |async) || page > 1; else loader">
@@ -20,16 +20,16 @@ import { fromRepos } from '@clrepos/shared/repos';
 
           <div class="header" no-border>
             <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-            <h1 class="capital-letter">{{'COMMON.TAG_TITLE' | translate}} {{title}}</h1>
+            <h1 class="capital-letter text-second-color">{{'COMMON.TAG_TITLE' | translate}} {{title}}</h1>
             <div class="header-container-empty" ></div>
           </div>
 
           <ion-card class="fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
             <ion-card-header>
-              <ion-card-title class="text-color capital-letter">{{tag?.name }}</ion-card-title>
+              <ion-card-title class="text-second-color capital-letter">{{tag?.name }}</ion-card-title>
             </ion-card-header>
 
-            <ion-card-content class="text-color">
+            <ion-card-content class="text-second-color">
               <div class="displays-around margin-top font-small capital-letter">
                 <div class="width-half margin-top-10">{{'COMMON.COMMIT' | translate}}:</div>
                 <div class="width-half margin-top-10">{{tag?.commit?.sha}}</div>
@@ -43,7 +43,8 @@ import { fromRepos } from '@clrepos/shared/repos';
           <!-- INFINITE SCROLL  -->
           <ng-container *ngIf="(totalPages$ | async) as total">
             <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-              <ion-infinite-scroll-content loadingSpinner="crescent" color="primary" class="loadingspinner">
+              <ion-infinite-scroll-content class="loadingspinner">
+                <!-- <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner> -->
               </ion-infinite-scroll-content>
             </ion-infinite-scroll>
           </ng-container>
@@ -56,7 +57,7 @@ import { fromRepos } from '@clrepos/shared/repos';
      <ng-template #noData>
         <div class="header" no-border>
           <ion-back-button defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
+          <h1 class="capital-letter text-second-color">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
           <div class="header-container-empty" ></div>
         </div>
         <div class="error-serve">
@@ -66,12 +67,12 @@ import { fromRepos } from '@clrepos/shared/repos';
 
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner color="primary" class="loadingspinner"></ion-spinner>
+        <ion-spinner class="loadingspinner"></ion-spinner>
       </ng-template>
     </div>
 
     <ion-fab *ngIf="showButton" vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button class="color-button color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button class="back-color color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
     </ion-fab>
 
   </ion-content >

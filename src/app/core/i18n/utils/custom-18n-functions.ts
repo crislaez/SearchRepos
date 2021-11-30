@@ -11,8 +11,10 @@ export function createTranslateLoader(http: HttpClient) {
 export function appInitTranslations(translate: TranslateService, languages: string[], defaultLang: string): Promise<any> {
 
   const borwserLang = translate.getBrowserLang();
-  const storeLang = localStorage.getItem('Language')
-  const currentDefaultLnag = storeLang || (languages.includes(borwserLang) && borwserLang) || defaultLang
+  const storeLang = localStorage.getItem('Language');
+  //del localStorage o del navegador, o por defecto
+  // const currentDefaultLnag = storeLang || (languages.includes(borwserLang) && borwserLang) || defaultLang
+  const currentDefaultLnag = defaultLang;
 
   return new Promise<void>(resolve => {
     translate.addLangs(languages)

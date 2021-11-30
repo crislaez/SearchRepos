@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class ReposService {
 
 
   getRepos(name?:string, page?:string): Observable<any>{
-     return this.http.get(`${this.baseURL}users/${name}/repos?page=${page}&per_page=${this.perPage}`, {observe: 'response'}).pipe(
+     return this.http.get(`${this.baseURL}users/${name}/repos?page=${page}&per_page=${this.perPage}&sort=created`, {observe: 'response'}).pipe(
       map(response => ({repos: response?.body || [], page: (getResponseInfo(response.headers.get('link'), 'next', page) -1)|| 1, total_pages: getResponseInfo(response.headers.get('link'), 'last', page) || 1})),
       catchError(error => {
         return throwError(error)

@@ -246,7 +246,10 @@
 
 $backColor: #161B22;
 $textColor: white;
-$primary: #3880ff;
+$backColorSecond: #F4F4F4;
+// $primary: #3880ff;
+$primary: #161B22;
+
 
 ion-infinite-scroll-content{
   ion-spinner{
@@ -304,6 +307,7 @@ ion-tab-bar{
 ion-searchbar{
   --box-shadow: none !important;
   --border-radius: 50px !important;
+  --background:white;
 }
 
 ion-menu{
@@ -319,10 +323,14 @@ ion-menu{
 }
 
 ion-card{
-  // width: 40%;
+  box-shadow: none !important;
   width: 96%;
-  background: $backColor;
-  // --background: rgba(255,255,255,0.1);
+  background: white;
+
+  // display: flex;
+  // flex-direction: row;
+  // flex-wrap: wrap;
+  // justify-content: center;
 
   //titulo de la card
   ion-card-title{
@@ -337,8 +345,14 @@ ion-card{
   }
 
   img{
-    width: 100%;
+    width: 90%;
+    height: auto;
     border-radius: 50%;
+    // margin: 0 auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
   }
 
   ion-button{
@@ -358,15 +372,20 @@ ion-card{
 
 // ********** START APP CONFIG
 //ERROR
+//ERROR
 .error-serve{
   width: 100%;
-  height: 500px;
-  display: block;
+  height: 70vh;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-around;
-  align-content: center;
+  justify-content: center;
+  align-items: center;
+
+  div{
+    width: 80%;
+    text-align: center;
+  }
 }
 
 // CAPITAL LETTER
@@ -383,9 +402,17 @@ ion-card{
   color: $backColor;
 }
 
+.back-color {
+  --background: #161B22;
+}
+
 // PAGE BACKGROUND COLOR
 .components-color{
   background: $textColor;
+}
+
+.components-color-second{
+  background: $backColorSecond;
 }
 
 .width-max{
@@ -448,7 +475,9 @@ ion-card{
   width: 100%;
   z-index: 1;
   position: fixed;
-  background: $textColor;
+  // background: $textColor;
+  background: $backColorSecond;
+
 }
 
 //PAGE CONTAINER
@@ -467,7 +496,8 @@ ion-card{
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  background: $textColor;
+  // background: $textColor;
+  background: $backColorSecond;
 
   h1, h2{
     font-weight: bold;

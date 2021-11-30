@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { NotificationActions } from '@clrepos/shared/notification';
+import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { SubscriberActions } from '../actions';
+import * as SubscriberActions from '../actions/subscriber.actions';
 import { SubscriberService } from '../services/subscriber.service';
-
 
 @Injectable()
 export class SubscriberEffects {
@@ -14,22 +16,25 @@ export class SubscriberEffects {
       ofType(SubscriberActions.loadSubscribers),
       switchMap(({userName, repoName, page}) =>
         this._subscriber.getSubscribers(userName, repoName, page).pipe(
-          // tap(({page, subscribers, total_pages}) => console.log(subscribers)),
-          map(({page, subscribers, total_pages}) => SubscriberActions.saveSubscribers({repoName, subscribers: subscribers || [], page: page || 1, total_pages: total_pages || 1}) ),
+          map(({page, subscribers, total_pages}) => SubscriberActions.saveSubscribers({repoName, subscribers: subscribers || [], page: page || 1, total_pages: total_pages || 1, status: EntityStatus.Loaded }) ),
           catchError((error) => {
-            console.log(error)
-            return [SubscriberActions.saveSubscribers({repoName, subscribers: [], page: 1, total_pages: 1}) ]
+            return of(
+              SubscriberActions.saveSubscribers({repoName, subscribers: [], page: 1, total_pages: 1, status: EntityStatus.Error}),
+              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_SUBSCRIBERS'})
+            )
           })
         )
       )
     )
   );
 
-  // loadReposInit$ = createEffect(() =>
-  //   of(SubscriberActions.loadRepos({name: 'CrisLaez', page: '1'}))
-  // );
 
-  constructor(private _subscriber: SubscriberService, private actions$: Actions){}
+  constructor(
+    private _subscriber: SubscriberService,
+    private actions$: Actions
+  ){ }
+
+
 }
 // <https://api.github.com/user/51215457/repos?page=3&per_page=15>; rel="prev",
 // <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="next",
