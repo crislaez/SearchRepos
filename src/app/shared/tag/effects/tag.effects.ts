@@ -1,41 +1,37 @@
 import { Injectable } from '@angular/core';
+import { NotificationActions } from '@clrepos/shared/notification';
+import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { TagActions } from '../actions';
+import { of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import * as TagActions from '../actions/tag.actions';
 import { TagService } from '../services/tag.service';
-
 
 @Injectable()
 export class TagsEffects {
-
 
   loadTags$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TagActions.loadTags),
       switchMap(({userName, repoName, page}) =>
         this._tag.getTags(userName, repoName, page).pipe(
-          // tap(({page, tags, total_pages}) => console.log(tags)),
-          map(({page, tags, total_pages}) => TagActions.saveTags({repoName, tags: tags || [], page: page || 1, total_pages: total_pages || 1}) ),
+          map(({page, tags, total_pages}) => TagActions.saveTags({repoName, tags: tags || [], page: page || 1, total_pages: total_pages || 1, status: EntityStatus.Loaded }) ),
           catchError((error) => {
-            console.log(error)
-            return [TagActions.saveTags({repoName, tags: [], page: 1, total_pages: 1}) ]
+            return of(
+              TagActions.saveTags({repoName, tags: [], page: 1, total_pages: 1, status: EntityStatus.Error}),
+              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_REPOS'})
+            )
           })
         )
       )
     )
   );
 
-  // loadReposInit$ = createEffect(() =>
-  //   of(TagActions.loadRepos({name: 'CrisLaez', page: '1'}))
-  // );
 
-  constructor(private _tag: TagService, private actions$: Actions){}
+  constructor(
+    private _tag: TagService,
+    private actions$: Actions
+  ){ }
+
 }
-// <https://api.github.com/user/51215457/repos?page=3&per_page=15>; rel="prev",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="next",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="last",
-// <https://api.github.com/user/51215457/repos?page=1&per_page=15>; rel="first"
 
-
-// <https://api.github.com/user/51215457/repos?page=2&per_page=15>; rel="next",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="last"

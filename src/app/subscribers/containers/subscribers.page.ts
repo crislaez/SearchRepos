@@ -48,7 +48,8 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
                 <ng-container *ngIf="(totalPages$ | async) as total">
                   <ng-container *ngIf="statusComponent?.page < total">
                     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-                      <ion-infinite-scroll-content loadingSpinner="crescent" color="primary" class="loadingspinner">
+                      <ion-infinite-scroll-content class="loadingspinner">
+                        <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner>
                       </ion-infinite-scroll-content>
                     </ion-infinite-scroll>
                   </ng-container>

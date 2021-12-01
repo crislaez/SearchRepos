@@ -14,44 +14,51 @@ import { fromRepos } from '@clrepos/shared/repos';
   <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
     <div class="container components-color-second">
 
-    <ng-container *ngIf="(tags$ | async) as tags">
-      <ng-container *ngIf="!(pending$ |async) || page > 1; else loader">
-        <ng-container *ngIf="tags?.length > 0; else noData">
+      <ng-container *ngIf="(tags$ | async) as tags">
+        <ng-container *ngIf="(status$ | async) as status">
+          <ng-container *ngIf="status !== 'pending' || statusComponent?.page !== 1; else loader">
+            <ng-container *ngIf="status !== 'error'; else loader">
 
-          <div class="header" no-border>
-            <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-            <h1 class="capital-letter text-second-color">{{'COMMON.TAG_TITLE' | translate}} {{title}}</h1>
-            <div class="header-container-empty" ></div>
-          </div>
+              <ng-container *ngIf="tags?.length > 0; else noData">
 
-          <ion-card class="fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
-            <ion-card-header>
-              <ion-card-title class="text-second-color capital-letter">{{tag?.name }}</ion-card-title>
-            </ion-card-header>
+                <div class="header" no-border>
+                  <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
+                  <h1 class="capital-letter text-second-color">{{'COMMON.TAG_TITLE' | translate}} {{title}}</h1>
+                  <div class="header-container-empty" ></div>
+                </div>
 
-            <ion-card-content class="text-second-color">
-              <div class="displays-around margin-top font-small capital-letter">
-                <div class="width-half margin-top-10">{{'COMMON.COMMIT' | translate}}:</div>
-                <div class="width-half margin-top-10">{{tag?.commit?.sha}}</div>
-              </div>
-              <!-- <div class="font-small margin-top-10" *ngIf="tag?.comments > 0"><ion-button color="primary" class="font-small" (click)="saveCommentTotalPage(tag?.comments)" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div> -->
-            </ion-card-content>
+                <ion-card class="fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
+                  <ion-card-header>
+                    <ion-card-title class="text-second-color capital-letter">{{tag?.name }}</ion-card-title>
+                  </ion-card-header>
 
-            <!-- <ion-ripple-effect></ion-ripple-effect> -->
-          </ion-card>
+                  <ion-card-content class="text-second-color">
+                    <div class="displays-around margin-top font-small capital-letter">
+                      <div class="width-half margin-top-10">{{'COMMON.COMMIT' | translate}}:</div>
+                      <div class="width-half margin-top-10">{{tag?.commit?.sha}}</div>
+                    </div>
+                    <!-- <div class="font-small margin-top-10" *ngIf="tag?.comments > 0"><ion-button color="primary" class="font-small" (click)="saveCommentTotalPage(tag?.comments)" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div> -->
+                  </ion-card-content>
 
-          <!-- INFINITE SCROLL  -->
-          <ng-container *ngIf="(totalPages$ | async) as total">
-            <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-              <ion-infinite-scroll-content class="loadingspinner">
-                <!-- <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner> -->
-              </ion-infinite-scroll-content>
-            </ion-infinite-scroll>
+                  <!-- <ion-ripple-effect></ion-ripple-effect> -->
+                </ion-card>
+
+                <!-- INFINITE SCROLL  -->
+                <ng-container *ngIf="(totalPages$ | async) as total">
+                  <ng-container *ngIf="statusComponent?.page < total">
+                    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
+                      <ion-infinite-scroll-content class="loadingspinner">
+                        <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner>
+                      </ion-infinite-scroll-content>
+                    </ion-infinite-scroll>
+                  </ng-container>
+                </ng-container>
+
+              </ng-container>
+            </ng-container>
           </ng-container>
-
         </ng-container>
       </ng-container>
-    </ng-container>
 
      <!-- IS NO DATA  -->
      <ng-template #noData>
@@ -62,6 +69,17 @@ import { fromRepos } from '@clrepos/shared/repos';
         </div>
         <div class="error-serve">
           <span class="text-second-color">{{'COMMON.NORESULT' | translate}}</span>
+        </div>
+      </ng-template>
+
+      <!-- IS ERROR -->
+      <ng-template #serverError>
+        <div class="error-serve">
+          <div>
+            <span><ion-icon class="text-second-color big-size" name="cloud-offline-outline"></ion-icon></span>
+            <br>
+            <span class="text-second-color">{{'COMMON.ERROR' | translate}}</span>
+          </div>
         </div>
       </ng-template>
 
@@ -91,16 +109,21 @@ export class TagsPage implements OnInit {
   page: number = 1;
   showButton: boolean = false;
 
-  infiniteScroll$ = new EventEmitter();
-  pending$: Observable<boolean> = this.store.pipe(select(fromTag.getPending));
+  infiniteScroll$ = new EventEmitter<{page: number, repoName: string}>();
+  status$ = this.store.pipe(select(fromTag.getStatus));
   totalPages$: Observable<number> = this.store.pipe(select(fromTag.getTotalPages));
+
+  statusComponent: {page: number, repoName: string} = {
+    page:1,
+    repoName:''
+  };
 
   tags$: Observable<Tag[]> = combineLatest([
     this.route.params,
-    this.infiniteScroll$.pipe(startWith(1))
+    this.infiniteScroll$.pipe(startWith(this.statusComponent))
   ]).pipe(
-    filter( ([{repoName}, page]) => !!repoName),
-    switchMap(([{repoName}, page]) =>
+    filter( ([{repoName:repoNameRoute}, {page, repoName}]) => !!repoNameRoute || !!repoName),
+    switchMap(([{repoName:repoNameRoute}, {page, repoName}]) =>
       this.store.pipe(select(fromRepos.getUserName),
         map((userName) => {
           if(!userName){
@@ -109,18 +132,24 @@ export class TagsPage implements OnInit {
           }
           return userName
         }),
-        tap((userName: any) => this.store.dispatch(TagActions.loadTags({userName, repoName, page:page.toString()}))),
+        tap((userName: any) => {
+          repoName = repoNameRoute || repoName
+          this.store.dispatch(TagActions.loadTags({userName, repoName, page:page.toString()}))
+        }),
         switchMap(() =>
           this.store.pipe(select(fromTag.getTags))
         )
       )
     )
+    ,tap(subs => console.log({subs}))
   );
 
 
-  constructor(private store: Store, private route: ActivatedRoute, private router: Router) {
-    //  this.tags$.subscribe(data => console.log(data))
-  }
+  constructor(
+    private store: Store,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
 
   ngOnInit(): void{
@@ -130,11 +159,12 @@ export class TagsPage implements OnInit {
   // INIFINITE SCROLL
   loadData(event, total) {
     setTimeout(() => {
-      this.page = this.page + 1;
-      if(this.page >= total){
-        this.ionInfiniteScroll.disabled = true
+      this.statusComponent = {...this.statusComponent, page: this.statusComponent?.page + 1}
+
+      if(this.statusComponent?.page >= total){
+        if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true;
       }
-      this.infiniteScroll$.next(this.page)
+      this.infiniteScroll$.next(this.statusComponent);
       event.target.complete();
     }, 500);
     this.content.scrollToBottom()
