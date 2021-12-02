@@ -17,14 +17,7 @@ export class IssueService {
 
 
    getIssues(userName?:string, repoName?:string, page?:string): Observable<any>{
-    // https://api.github.com/users/crislaez/repos?page=2&per_page=100
-    // https://api.github.com/users//repos/crislaez/Back-End-Imagic/issues?page=1&per_page=15
-
      return this.http.get(`${this.baseURL}repos/${userName}/${repoName}/issues?page=${page}&per_page=${this.perPage}`, {observe: 'response'}).pipe(
-      // tap(data => {
-      //   console.log(data?.body)
-      //   console.log(data.headers.get('link'))
-      // }),
       map(response => ({issues: response?.body || [], page: (getResponseInfo(response.headers.get('link'), 'next', page) -1)|| 1, total_pages: getResponseInfo(response.headers.get('link'), 'last', page) || 1})),
       catchError(error => {
         return throwError(error)

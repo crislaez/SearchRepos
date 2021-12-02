@@ -13,16 +13,12 @@ export class TagService {
   baseURL:string = `${this._coreConfig.getEndpoint()}`;
   perPage:string = '15';
 
-   constructor(private http: HttpClient, private _coreConfig: CoreConfigService) { }
+
+  constructor(private http: HttpClient, private _coreConfig: CoreConfigService) { }
 
 
-   getTags(userName?:string, repoName?:string, page?:string): Observable<any>{
-    // https://api.github.com/repos/angular/angular-cli/tags
+  getTags(userName?:string, repoName?:string, page?:string): Observable<any>{
     return this.http.get(`${this.baseURL}repos/${userName}/${repoName}/tags?page=${page}&per_page=${this.perPage}`, {observe: 'response'}).pipe(
-      // tap(data => {
-      //   console.log(data?.body)
-      //   console.log(data.headers.get('link'))
-      // }),
       map(response => ({tags: response?.body || [], page: (getResponseInfo(response.headers.get('link'), 'next', page) -1)|| 1, total_pages: getResponseInfo(response.headers.get('link'), 'last', page) || 1})),
       catchError(error => {
         return throwError(error)

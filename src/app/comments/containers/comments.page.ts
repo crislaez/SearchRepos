@@ -1,54 +1,58 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Comment, CommentActions, fromComment } from '@clrepos/shared/comment';
 import { fromIssue } from '@clrepos/shared/issue';
 import { fromRepos } from '@clrepos/shared/repos';
-import { errorImage, trackById, gotToTop } from '@clrepos/shared/shared/utils/utils';
-import { IonInfiniteScroll } from '@ionic/angular';
+import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
+import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { EMPTY, Observable } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-comments',
   template: `
   <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
-    <div class="container components-color">
+    <div class="container components-color-second">
 
       <ng-container *ngIf="comment$ | async as comments">
-        <ng-container *ngIf="!(pending$ | async) || page > 1; else loader">
-          <ng-container *ngIf="comments?.length > 0 ; else noData">
+        <ng-container *ngIf="(status$ | async) as status">
+          <ng-container *ngIf="status !== 'pending' || statusComponent?.page !== 1; else loader">
+            <ng-container *ngIf="status !== 'error'; else loader">
 
-            <div class="header" no-border>
-              <ng-container *ngIf="(title$ | async) as title">
-                <ion-back-button  (click)="back(title)" defaultHref=""  class="text-second-color" [text]="''"></ion-back-button>
-                <h1 class="capital-letter">{{'COMMON.COMMENTS_TITLE' | translate}} {{title}}</h1>
-                <div class="header-container-empty" ></div>
-              </ng-container>
-            </div>
+              <ng-container *ngIf="comments?.length > 0 ; else noData">
 
-            <ion-card class="fade-in-card" *ngFor="let comment of comments; trackBy: trackById" >
-              <ion-card-header>
-                <ion-card-title class="text-color capital-letter">{{comment?.user?.login }}</ion-card-title>
-              </ion-card-header>
-
-              <ion-card-content class="text-color">
-                <div class="font-medium" *ngIf="comment?.body" [innerHTML]="comment?.body"></div>
-
-                <div class="displays-around margin-top font-small capital-letter">
-                  <div class="width-half margin-top-10">{{'COMMON.CREATE' | translate}}:</div>
-                  <div class="width-half margin-top-10">{{comment?.created_at | date}}</div>
-
-                  <div class="width-half margin-top-10">{{'COMMON.UPDATE' | translate}}:</div>
-                  <div class="width-half margin-top-10">{{comment?.updated_at | date}}</div>
+                <div class="header fade-in-card" no-border>
+                  <ng-container *ngIf="(title$ | async) as title">
+                    <ion-back-button (click)="back(title)" defaultHref=""  class="text-second-color" [text]="''"></ion-back-button>
+                    <h1 class="capital-letter text-second-color font-title">{{'COMMON.COMMENTS_TITLE' | translate}} {{title}}</h1>
+                    <div class="header-container-empty" ></div>
+                  </ng-container>
                 </div>
-                <div class="font-small margin-top-10"><a [href]="comment?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
-              </ion-card-content>
 
-              <!-- <ion-ripple-effect></ion-ripple-effect> -->
-            </ion-card>
+                <ion-card class="fade-in-card" *ngFor="let comment of comments; trackBy: trackById" >
+                  <ion-card-header>
+                    <ion-card-title class="text-second-color capital-letter font-big">{{comment?.user?.login }}</ion-card-title>
+                  </ion-card-header>
 
+                  <ion-card-content class="text-second-color">
+                    <div class="font-medium" *ngIf="comment?.body" [innerHTML]="comment?.body"></div>
+
+                    <div class="displays-around margin-top font-small capital-letter">
+                      <div class="width-half margin-top-10">{{'COMMON.CREATE' | translate}}:</div>
+                      <div class="width-half margin-top-10">{{comment?.created_at | date}}</div>
+
+                      <div class="width-half margin-top-10">{{'COMMON.UPDATE' | translate}}:</div>
+                      <div class="width-half margin-top-10">{{comment?.updated_at | date}}</div>
+                    </div>
+                    <div class="font-small margin-top-10"><a [href]="comment?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
+                  </ion-card-content>
+
+                  <!-- <ion-ripple-effect></ion-ripple-effect> -->
+                </ion-card>
+
+              </ng-container>
+            </ng-container>
           </ng-container>
         </ng-container>
       </ng-container>
@@ -57,7 +61,7 @@ import { IonContent } from '@ionic/angular';
       <ng-template #noData>
         <div class="header" no-border>
           <ion-back-button defaultHref="../" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter">{{'COMMON.NO_COMMENT_TITLE' | translate}}</h1>
+          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_COMMENT_TITLE' | translate}}</h1>
           <div class="header-container-empty" ></div>
         </div>
         <div class="error-serve">
@@ -65,14 +69,25 @@ import { IonContent } from '@ionic/angular';
         </div>
       </ng-template>
 
+      <!-- IS ERROR -->
+      <ng-template #serverError>
+        <div class="error-serve">
+          <div>
+            <span><ion-icon class="text-second-color big-size" name="cloud-offline-outline"></ion-icon></span>
+            <br>
+            <span class="text-second-color">{{'COMMON.ERROR' | translate}}</span>
+          </div>
+        </div>
+      </ng-template>
+
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner color="primary" class="loadingspinner"></ion-spinner>
+        <ion-spinner class="loadingspinner"></ion-spinner>
       </ng-template>
     </div>
 
     <ion-fab *ngIf="showButton" vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button class="color-button color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button class="back-color color-button-text" (click)="gotToTop(content)"> <ion-icon name="arrow-up-circle-outline"></ion-icon></ion-fab-button>
     </ion-fab>
 
   </ion-content >
@@ -87,11 +102,15 @@ export class CommentsPage {
   trackById = trackById;
   errorImage = errorImage;
   gotToTop = gotToTop;
-  page: number = 1;
-  showButton: boolean = false;
 
-  infiniteScroll$ = new EventEmitter();
-  pending$: Observable<boolean> = this.store.pipe(select(fromComment.getPending));
+  showButton: boolean = false;
+  statusComponent: {page: number, repoName: string} = {
+    page:1,
+    repoName:''
+  };
+
+  // infiniteScroll$ = new EventEmitter();
+  status$ = this.store.pipe(select(fromComment.getStatus));
   title$: Observable<string> = this.store.pipe(select(fromIssue.getRepoName));
 
   comment$: Observable<Comment[]> = this.route.params.pipe(
@@ -107,7 +126,7 @@ export class CommentsPage {
               }
               return userName
             }),
-            filter( (userName) => !!issueNumber && !!repoName),
+            filter(userName => typeof userName === 'string'),
             tap((userName: any) => this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber})) ),
             switchMap(() => this.store.pipe(select(fromComment.getComments)))
           )
@@ -117,9 +136,11 @@ export class CommentsPage {
   );
 
 
-  constructor(private store: Store, private route: ActivatedRoute, private router: Router) {
-    // this.comment$.subscribe(data => console.log(data))
-  }
+  constructor(
+    private store: Store,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
 
   back(title: string): void{

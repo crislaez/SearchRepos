@@ -81,8 +81,8 @@ import { startWith, switchMap, tap } from 'rxjs/operators';
 
                           <div class="font-small margin-top-10"><a [href]="repo?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
                           <div class="font-small margin-top-10" *ngIf="repo?.open_issues > 0"><ion-button class="font-small back-color" [routerLink]="['/issues/'+repo?.name]">{{'COMMON.SEE_ISSUES' | translate}}</ion-button></div>
-                          <div class="font-small margin-top-10"><ion-button  class="font-small back-color" [routerLink]="['/tags/'+repo?.name]">{{'COMMON.TAGS' | translate}}</ion-button></div>
-                          <div class="font-small margin-top-10"><ion-button  class="font-small back-color" [routerLink]="['/subscribers/'+repo?.name]">{{'COMMON.SUNBSCRIBERS' | translate}}</ion-button></div>
+                          <div class="font-small margin-top-10"><ion-button class="font-small back-color" [routerLink]="['/tags/'+repo?.name]">{{'COMMON.TAGS' | translate}}</ion-button></div>
+                          <div class="font-small margin-top-10"><ion-button class="font-small back-color" [routerLink]="['/subscribers/'+repo?.name]">{{'COMMON.SUNBSCRIBERS' | translate}}</ion-button></div>
 
                         </ion-card-content>
                         <!-- <ion-ripple-effect></ion-ripple-effect> -->

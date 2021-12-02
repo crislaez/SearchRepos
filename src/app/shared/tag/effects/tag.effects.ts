@@ -19,7 +19,7 @@ export class TagsEffects {
           catchError((error) => {
             return of(
               TagActions.saveTags({repoName, tags: [], page: 1, total_pages: 1, status: EntityStatus.Error}),
-              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_REPOS'})
+              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_TAGS'})
             )
           })
         )

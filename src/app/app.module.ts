@@ -51,7 +51,7 @@ export function localeIdFactory(translate: TranslateService): DynamicLocaleId {
       }
     ),
     EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({maxAge:4}),
+    StoreDevtoolsModule.instrument({maxAge:20}),
     AppRoutingModule,
     HttpClientModule
   ],

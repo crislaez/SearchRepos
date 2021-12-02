@@ -14,10 +14,10 @@ import { TagsPageRoutingModule } from './tags-routing.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    TagsPageRoutingModule,
+    // ReposModule,
+    TagModule,
     TranslateModule.forChild(),
-    ReposModule,
-    TagModule
+    TagsPageRoutingModule
   ],
   declarations: [TagsPage]
 })

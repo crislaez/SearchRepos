@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
+import { NotificationActions } from '@clrepos/shared/notification';
+import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { CommentActions } from '../actions';
+import * as CommentActions from '../actions/comment.actions';
 import { CommentService } from '../services/comment.service';
 
 
@@ -14,27 +17,24 @@ export class CommentEffects {
       ofType(CommentActions.loadComments),
       switchMap(({userName, repoName, issueNumber, page}) =>
         this._comment.getComment(userName, repoName, issueNumber, page).pipe(
-          map(({comment}) => CommentActions.saveComments({comment: comment || []}) ),
+          map(({comment}) => CommentActions.saveComments({ comment: comment || [], status: EntityStatus.Loaded })),
           catchError((error) => {
-            console.log(error)
-            return [CommentActions.saveComments({comment: []}) ]
+            return of(
+              CommentActions.saveComments({ comment: [], status: EntityStatus.Error }),
+              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_REPOS'})
+            );
           })
         )
       )
     )
   );
 
-  // loadReposInit$ = createEffect(() =>
-  //   of(CommentActions.loadRepos({name: 'CrisLaez', page: '1'}))
-  // );
 
-  constructor(private _comment: CommentService, private actions$: Actions){}
+
+  constructor(
+    private _comment: CommentService,
+    private actions$: Actions
+  ){ }
+
+
 }
-// <https://api.github.com/user/51215457/repos?page=3&per_page=15>; rel="prev",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="next",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="last",
-// <https://api.github.com/user/51215457/repos?page=1&per_page=15>; rel="first"
-
-
-// <https://api.github.com/user/51215457/repos?page=2&per_page=15>; rel="next",
-// <https://api.github.com/user/51215457/repos?page=5&per_page=15>; rel="last"

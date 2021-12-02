@@ -15,11 +15,11 @@ import { CommentsPage } from './containers/comments.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    CommentsPageRoutingModule,
+    // IssueModule,
+    // ReposModule,
+    CommentModule,
     TranslateModule.forChild(),
-    IssueModule,
-    ReposModule,
-    CommentModule
+    CommentsPageRoutingModule
   ],
   declarations: [CommentsPage]
 })

@@ -16,15 +16,7 @@ export class SubscriberService {
 
 
    getSubscribers(userName?:string, repoName?:string, page?:string): Observable<any>{
-    // https://api.github.com/repos/angular/angular-cli/tags
-    // https://api.github.com/repos/angular/a/subscriber
-    // https://api.github.com/repos/angular/a/subscriber?page=1&per_page=15
-    // https://api.github.com/repos/angular/a/subscriber
     return this.http.get(`${this.baseURL}repos/${userName}/${repoName}/subscribers?page=${page}&per_page=${this.perPage}`, {observe: 'response'}).pipe(
-      // tap(data => {
-      //   console.log(data?.body)
-      //   console.log(data.headers.get('link'))
-      // }),
       map(response => ({subscribers: response?.body || [], page: (this.getResponseInfo(response.headers.get('link'), 'next', page) -1)|| 1, total_pages: this.getResponseInfo(response.headers.get('link'), 'last', page) || 1})),
       catchError(error => {
         return throwError(error)

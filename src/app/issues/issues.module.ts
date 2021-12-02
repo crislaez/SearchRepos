@@ -13,10 +13,10 @@ import { IssuesPageRoutingModule } from './issues-routing.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    IssuesPageRoutingModule,
+    // ReposModule,
+    IssueModule,
     TranslateModule.forChild(),
-    ReposModule,
-    IssueModule
+    IssuesPageRoutingModule
   ],
   declarations: [IssuesPage]
 })

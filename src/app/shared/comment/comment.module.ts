@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { CommentEffects } from './effects/comment.effects';
-import * as fromComment from './reducers';
+import * as fromComment from './reducers/comment.reducer';
 
 
 @NgModule({
@@ -13,7 +13,7 @@ import * as fromComment from './reducers';
     CommonModule,
     FormsModule,
     IonicModule,
-    StoreModule.forFeature(fromComment.commentKey, fromComment.reducer),
+    StoreModule.forFeature(fromComment.commentFeatureKey, fromComment.reducer),
     EffectsModule.forFeature([CommentEffects])
   ]
 })

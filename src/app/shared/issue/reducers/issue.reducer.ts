@@ -1,43 +1,30 @@
 import { createReducer, on  } from '@ngrx/store';
-import { IssueActions } from '../actions';
+import * as IssueActions from '../actions/issue.actions';
 import { Issue } from '../models';
+import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 
-// interface Status {
-//   pending?: boolean;
-//   error?: string;
-// }
+export const issueFeatureKey = 'issues';
 
 export interface State{
   issues?: Issue[];
   repoName?:string;
-  pending?: boolean;
+  status: EntityStatus;
   page?: number;
   total_pages?: number;
 }
 
 const initialState: State = {
+  status: EntityStatus.Initial,
   issues:[],
   repoName:'',
-  pending: false,
   page: 1,
   total_pages: 1,
 }
 
-const issueReducer = createReducer(
+export const reducer = createReducer(
   initialState,
-  on(IssueActions.loadIssues, (state) => ({...state, pending: true})),
-  on(IssueActions.saveIssues, (state, { repoName, issues, page, total_pages }) => ({...state, repoName, issues:[...state.issues, ...issues], page, total_pages, pending: false })),
-  on(IssueActions.deleteIssues, (state) => ({...state, issues:[], page:1, total_pages:1, repoName:'', pending: false })),
+  on(IssueActions.loadIssues, (state) => ({...state, status: EntityStatus.Pending})),
+  on(IssueActions.saveIssues, (state, { repoName, issues, page, total_pages, status }) => ({...state, repoName, issues:[...state.issues, ...issues], page, total_pages, status })),
+  on(IssueActions.deleteIssues, (state) => ({...state, issues:[], page:1, total_pages:1, repoName:'', status: EntityStatus.Loaded })),
 
 );
-
-export function reducer(state: State | undefined, action: IssueActions.IssuesActionsUnion){
-  return issueReducer(state, action);
-}
-
-export const getIssues = (state: State) => state?.issues;
-export const getRepoName= (state: State) => state?.repoName;
-export const getPending = (state: State) => state?.pending;
-export const getPage = (state: State) => state?.page;
-export const getTotalPages = (state: State) => state?.total_pages;
-

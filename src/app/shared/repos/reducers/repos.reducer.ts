@@ -1,15 +1,15 @@
-import { createReducer, on  } from '@ngrx/store';
-import * as  ReposActions from '../actions/repos.actions'
-import { Repo } from '../models';
 import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
+import { createReducer, on } from '@ngrx/store';
+import * as ReposActions from '../actions/repos.actions';
+import { Repo } from '../models';
 
 
 export const reposFeatureKey = 'repos';
 
 export interface State{
+  status: EntityStatus;
   repos?: Repo[];
   usserName?:string;
-  status: EntityStatus;
   page?: number;
   total_pages?: number;
 }

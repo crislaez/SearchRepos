@@ -14,9 +14,9 @@ import { SearchPageRoutingModule } from './search-routing.module';
     FormsModule,
     IonicModule,
     SharedModule,
+    ReposModule,
     TranslateModule.forChild(),
     SearchPageRoutingModule,
-    ReposModule
   ],
   declarations: [SearchPage]
 })

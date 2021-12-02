@@ -37,6 +37,8 @@
   "ERRORS":{
     "ERROR_LOAD_REPOS":"error loading repos",
     "ERROR_LOAD_SUBSCRIBERS":"error loading subscribers",
-    "ERROR_LOAD_TAGS":"error loading tags"
+    "ERROR_LOAD_TAGS":"error loading tags",
+    "ERROR_LOAD_ISSUES":"error loading issues",
+    "ERROR_LOAD_COMMENTS":"error loading comments"
   }
 }

@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { ReposEffects } from './effects/issue.effects';
-import * as fromIssue from './reducers';
+import * as fromIssue from './reducers/issue.reducer';
 
 
 @NgModule({
@@ -13,7 +13,7 @@ import * as fromIssue from './reducers';
     CommonModule,
     FormsModule,
     IonicModule,
-    StoreModule.forFeature(fromIssue.issueKey, fromIssue.reducer),
+    StoreModule.forFeature(fromIssue.issueFeatureKey, fromIssue.reducer),
     EffectsModule.forFeature([ReposEffects])
   ]
 })

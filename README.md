@@ -2,23 +2,21 @@
 
 Search repos es una aplicación hecha en Ionic (Angular, TypeScript, Sass/Css, Html, Rxjs, Ngrx)
 
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_1.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_1.JPG" />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_0.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_0.JPG " />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_2.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_2.JPG " />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_2_1.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_2_1.JPG " />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_3.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_3.JPG " />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_4.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_4.JPG " />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_5.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_5.JPG " />
 <hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_6.PNG" />
-<hr>
-<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_7.PNG" />
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_6.JPG " />
 <hr>
 
 

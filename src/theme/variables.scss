@@ -243,8 +243,9 @@
   // font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-$backColor: #161B22;
+// 6E3CBC
+// 161B22
+$backColor: #032541;
 $textColor: white;
 $backColorSecond: #F4F4F4;
 // $primary: #3880ff;
@@ -326,11 +327,7 @@ ion-card{
   box-shadow: none !important;
   width: 96%;
   background: white;
-
-  // display: flex;
-  // flex-direction: row;
-  // flex-wrap: wrap;
-  // justify-content: center;
+  border: 1px solid #EAEAEA;
 
   //titulo de la card
   ion-card-title{
@@ -403,7 +400,8 @@ ion-card{
 }
 
 .back-color {
-  --background: #161B22;
+  // --background: #161B22;
+  --background: #032541;
 }
 
 // PAGE BACKGROUND COLOR
@@ -427,6 +425,14 @@ ion-card{
   width: 45%;
 }
 
+.font-title{
+  font-size: 27px !important;
+}
+
+.font-big{
+  font-size: 17px !important;
+}
+
 .font-medium{
   font-size: 13px !important;
 }
@@ -447,6 +453,7 @@ ion-card{
   border-radius: 10px;
   margin-top: 5px !important;
   min-height: 20px !important;
+  padding: 5px;
 }
 
 .displays-between{

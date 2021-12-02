@@ -22,7 +22,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 
                 <div class="header" no-border>
                   <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-                  <h1 class="capital-letter text-second-color">{{'COMMON.SUBSCRIBERS_TITLE' | translate}} {{title}}</h1>
+                  <h1 class="capital-letter text-second-color font-title">{{'COMMON.SUBSCRIBERS_TITLE' | translate}} {{title}}</h1>
                   <div class="header-container-empty" ></div>
                 </div>
 
@@ -65,7 +65,7 @@ import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
       <ng-template #noData>
         <div class="header" no-border>
           <ion-back-button defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter">{{'COMMON.NO_SUBSCRIBERS_TITLE' | translate}}</h1>
+          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_SUBSCRIBERS_TITLE' | translate}}</h1>
           <div class="header-container-empty" ></div>
         </div>
         <div class="error-serve">
@@ -133,8 +133,9 @@ export class SubscribersPage implements OnInit {
           }
           return userName
         }),
+        filter(userName => typeof userName === 'string'),
         tap((userName) => {
-          repoName = repoNameRoute || repoName
+          repoName = repoNameRoute || repoName;
           this.store.dispatch(SubscriberActions.loadSubscribers({repoName, userName: (userName as string), page: page?.toString()}))
         }),
         switchMap(() =>

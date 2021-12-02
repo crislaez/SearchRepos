@@ -17,19 +17,19 @@ import { fromRepos } from '@clrepos/shared/repos';
       <ng-container *ngIf="(tags$ | async) as tags">
         <ng-container *ngIf="(status$ | async) as status">
           <ng-container *ngIf="status !== 'pending' || statusComponent?.page !== 1; else loader">
-            <ng-container *ngIf="status !== 'error'; else loader">
+            <ng-container *ngIf="status !== 'error'; else serverError">
 
               <ng-container *ngIf="tags?.length > 0; else noData">
 
                 <div class="header" no-border>
                   <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-                  <h1 class="capital-letter text-second-color">{{'COMMON.TAG_TITLE' | translate}} {{title}}</h1>
+                  <h1 class="capital-letter text-second-color font-title">{{'COMMON.TAG_TITLE' | translate}} {{title}}</h1>
                   <div class="header-container-empty" ></div>
                 </div>
 
                 <ion-card class="fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
                   <ion-card-header>
-                    <ion-card-title class="text-second-color capital-letter">{{tag?.name }}</ion-card-title>
+                    <ion-card-title class="text-second-color capital-letter font-big">{{tag?.name }}</ion-card-title>
                   </ion-card-header>
 
                   <ion-card-content class="text-second-color">
@@ -64,7 +64,7 @@ import { fromRepos } from '@clrepos/shared/repos';
      <ng-template #noData>
         <div class="header" no-border>
           <ion-back-button defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter text-second-color">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
+          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
           <div class="header-container-empty" ></div>
         </div>
         <div class="error-serve">
@@ -132,6 +132,7 @@ export class TagsPage implements OnInit {
           }
           return userName
         }),
+        filter(userName => typeof userName === 'string'),
         tap((userName: any) => {
           repoName = repoNameRoute || repoName
           this.store.dispatch(TagActions.loadTags({userName, repoName, page:page.toString()}))
@@ -141,7 +142,7 @@ export class TagsPage implements OnInit {
         )
       )
     )
-    ,tap(subs => console.log({subs}))
+    // ,tap(subs => console.log({subs}))
   );
 
 

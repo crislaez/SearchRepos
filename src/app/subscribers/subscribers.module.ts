@@ -13,10 +13,10 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     FormsModule,
     IonicModule,
-    SubscribersPageRoutingModule,
+    // ReposModule,
+    SubscriberModule,
     TranslateModule.forChild(),
-    ReposModule,
-    SubscriberModule
+    SubscribersPageRoutingModule,
   ],
   declarations: [SubscribersPage]
 })
