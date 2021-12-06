@@ -32,7 +32,7 @@
     "COMMIT":"Commit",
     "PUSHED":"Pushed",
     "LICENCE":"Licente",
-    "ERROR":"An error has occurred, swipe down to reload"
+    "ERROR":"An error has occurred"
   },
   "ERRORS":{
     "ERROR_LOAD_REPOS":"error loading repos",

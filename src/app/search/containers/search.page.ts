@@ -171,7 +171,7 @@ export class SearchPage {
   status$ = this.store.pipe(select(fromRepos.getStatus));
   totalPages$ = this.store.pipe(select(fromRepos.getTotalPages));
 
-  respos$= this.infiniteScroll$.pipe(
+  respos$ = this.infiniteScroll$.pipe(
     startWith(this.statusComponent),
     tap(({formName, page}) => {
       if(!!formName) this.store.dispatch(ReposActions.loadRepos({name:formName, page:page.toString()}))

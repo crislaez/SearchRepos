@@ -37,5 +37,3 @@ export class SubscriberService {
     return Number(result)
   }
 }
-// https://api.github.com/repos/angular/a/subscriber
-// https://api.github.com/repos/angular/a/subscriber

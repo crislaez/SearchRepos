@@ -9,7 +9,6 @@ import * as fromRepos from './reducers/repos.reducer';
 @NgModule({
   imports: [
     CommonModule,
-    // FormsModule,
     NotificationModule,
     StoreModule.forFeature(fromRepos.reposFeatureKey, fromRepos.reducer),
     EffectsModule.forFeature([ReposEffects])

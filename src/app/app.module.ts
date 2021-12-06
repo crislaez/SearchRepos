@@ -17,6 +17,7 @@ import { appInitTranslations, createTranslateLoader } from './core/i18n/utils/cu
 import { DynamicLocaleId } from './core/i18n/utils/dynamic-locale-id.class';
 import { CoreConfigService } from './core/services/core-config.service';
 import { HttpErrorInterceptor } from './core/services/http-error.interceptor';
+import { ReposModule } from '@clrepos/shared/repos/repos.module';
 
 export function appInitializerFactory(translate: TranslateService, coreConfig: CoreConfigService): Function {
   coreConfig.importConfig(appConfig);
@@ -34,6 +35,7 @@ export function localeIdFactory(translate: TranslateService): DynamicLocaleId {
   imports: [
     BrowserModule,
     CoreModule,
+    ReposModule,
     IonicModule.forRoot(),
     TranslateModule.forRoot({
       loader: {

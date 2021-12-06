@@ -11,7 +11,7 @@ import { SubscriberService } from '../services/subscriber.service';
 export class SubscriberEffects {
 
 
-  loadTags$ = createEffect(() =>
+  loadSubscribers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(SubscriberActions.loadSubscribers),
       switchMap(({userName, repoName, page}) =>

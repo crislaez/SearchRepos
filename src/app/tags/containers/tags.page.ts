@@ -1,12 +1,12 @@
-import { Component, ChangeDetectionStrategy, ViewChild, EventEmitter, OnInit } from '@angular/core';
-import { combineLatest, EMPTY, Observable } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { fromRepos } from '@clrepos/shared/repos';
+import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
+import { fromTag, Tag, TagActions } from '@clrepos/shared/tag';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
-import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
-import { fromTag, Tag, TagActions } from '@clrepos/shared/tag';
-import { trackById, errorImage, gotToTop } from '@clrepos/shared/shared/utils/utils';
-import { fromRepos } from '@clrepos/shared/repos';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, startWith, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tags',
@@ -74,6 +74,11 @@ import { fromRepos } from '@clrepos/shared/repos';
 
       <!-- IS ERROR -->
       <ng-template #serverError>
+        <div class="header" no-border>
+          <ion-back-button defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
+          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
+          <div class="header-container-empty" ></div>
+        </div>
         <div class="error-serve">
           <div>
             <span><ion-icon class="text-second-color big-size" name="cloud-offline-outline"></ion-icon></span>
@@ -109,32 +114,23 @@ export class TagsPage implements OnInit {
   page: number = 1;
   showButton: boolean = false;
 
-  infiniteScroll$ = new EventEmitter<{page: number, repoName: string}>();
+  infiniteScroll$ = new EventEmitter<{page: number}>();
   status$ = this.store.pipe(select(fromTag.getStatus));
   totalPages$: Observable<number> = this.store.pipe(select(fromTag.getTotalPages));
 
-  statusComponent: {page: number, repoName: string} = {
+  statusComponent: {page: number} = {
     page:1,
-    repoName:''
   };
 
   tags$: Observable<Tag[]> = combineLatest([
     this.route.params,
     this.infiniteScroll$.pipe(startWith(this.statusComponent))
   ]).pipe(
-    filter( ([{repoName:repoNameRoute}, {page, repoName}]) => !!repoNameRoute || !!repoName),
-    switchMap(([{repoName:repoNameRoute}, {page, repoName}]) =>
+    filter( ([{repoName}]) => !!repoName),
+    switchMap(([{repoName}, {page}]) =>
       this.store.pipe(select(fromRepos.getUserName),
-        map((userName) => {
-          if(!userName){
-            this.router.navigate(['/search'])
-            return EMPTY
-          }
-          return userName
-        }),
-        filter(userName => typeof userName === 'string'),
+        filter(userName => (typeof userName === 'string' && !!repoName)),
         tap((userName: any) => {
-          repoName = repoNameRoute || repoName
           this.store.dispatch(TagActions.loadTags({userName, repoName, page:page.toString()}))
         }),
         switchMap(() =>
@@ -142,14 +138,12 @@ export class TagsPage implements OnInit {
         )
       )
     )
-    // ,tap(subs => console.log({subs}))
   );
 
 
   constructor(
     private store: Store,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) { }
 
 
@@ -160,7 +154,7 @@ export class TagsPage implements OnInit {
   // INIFINITE SCROLL
   loadData(event, total) {
     setTimeout(() => {
-      this.statusComponent = {...this.statusComponent, page: this.statusComponent?.page + 1}
+      this.statusComponent = {page: this.statusComponent?.page + 1}
 
       if(this.statusComponent?.page >= total){
         if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true;

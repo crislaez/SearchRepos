@@ -17,8 +17,8 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 
       <ng-container *ngIf="comment$ | async as comments">
         <ng-container *ngIf="(status$ | async) as status">
-          <ng-container *ngIf="status !== 'pending' || statusComponent?.page !== 1; else loader">
-            <ng-container *ngIf="status !== 'error'; else loader">
+          <ng-container *ngIf="status !== 'pending'; else loader">
+            <ng-container *ngIf="status !== 'error'; else serverError">
 
               <ng-container *ngIf="comments?.length > 0 ; else noData">
 
@@ -71,6 +71,11 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 
       <!-- IS ERROR -->
       <ng-template #serverError>
+        <div class="header" no-border>
+          <ion-back-button defaultHref="../" class="text-second-color" [text]="''"></ion-back-button>
+          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_COMMENT_TITLE' | translate}}</h1>
+          <div class="header-container-empty" ></div>
+        </div>
         <div class="error-serve">
           <div>
             <span><ion-icon class="text-second-color big-size" name="cloud-offline-outline"></ion-icon></span>
@@ -104,12 +109,7 @@ export class CommentsPage {
   gotToTop = gotToTop;
 
   showButton: boolean = false;
-  statusComponent: {page: number, repoName: string} = {
-    page:1,
-    repoName:''
-  };
 
-  // infiniteScroll$ = new EventEmitter();
   status$ = this.store.pipe(select(fromComment.getStatus));
   title$: Observable<string> = this.store.pipe(select(fromIssue.getRepoName));
 
@@ -119,15 +119,10 @@ export class CommentsPage {
       this.store.pipe(select(fromIssue.getRepoName),
         switchMap( (repoName) =>
           this.store.pipe(select(fromRepos.getUserName),
-            map(userName => {
-              if(!userName && !repoName){
-                this.router.navigate(['/search'])
-                return EMPTY
-              }
-              return userName
-            }),
             filter(userName => typeof userName === 'string'),
-            tap((userName: any) => this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber})) ),
+            tap((userName: any) =>
+              this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber}))
+            ),
             switchMap(() => this.store.pipe(select(fromComment.getComments)))
           )
         )

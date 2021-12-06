@@ -12,7 +12,7 @@ export const getRepos = createSelector(
 
 export const getUserName = createSelector(
   selectorReposState,
-  (state) => state.usserName
+  (state) => state?.usserName
 );
 
 export const getStatus = createSelector(

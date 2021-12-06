@@ -243,13 +243,15 @@
   // font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-// 6E3CBC
-// 161B22
-$backColor: #032541;
-$textColor: white;
-$backColorSecond: #F4F4F4;
-// $primary: #3880ff;
-$primary: #161B22;
+
+$backColor: #282c34;
+$textColor: #fff;
+
+// 111827
+// 282c34
+$backColorSecond: #111827;
+$backColorFirst: #1D2536;
+$primary: #fff;
 
 
 ion-infinite-scroll-content{
@@ -279,11 +281,11 @@ ion-spinner {
 
 //HEADER PRINCIPAÑ
 ion-header{
-  background: $backColor;
+  background: $backColorFirst;
   //header principa
   ion-toolbar{
     width: 100%;
-    --background: $backColor;
+    --background: $backColorFirst;
     border: 0px !important;
     border-bottom-color: transparent !important;
     background-image: none !important;
@@ -308,7 +310,7 @@ ion-tab-bar{
 ion-searchbar{
   --box-shadow: none !important;
   --border-radius: 50px !important;
-  --background:white;
+  --background:#1D2536;
 }
 
 ion-menu{
@@ -319,15 +321,15 @@ ion-menu{
 
   //contenido dentro de cada lista del menu lateral
   ion-item{
-    --background: #032541 !important;
+    --background: #282c34 !important;
   }
 }
 
 ion-card{
   box-shadow: none !important;
   width: 96%;
-  background: white;
-  border: 1px solid #EAEAEA;
+  background: #1D2536;
+  // border: 1px solid #EAEAEA;
 
   //titulo de la card
   ion-card-title{
@@ -396,12 +398,11 @@ ion-card{
 }
 
 .text-second-color{
-  color: $backColor;
+  color: $textColor;
 }
 
 .back-color {
-  // --background: #161B22;
-  --background: #032541;
+  --background: #111827;
 }
 
 // PAGE BACKGROUND COLOR
@@ -570,7 +571,7 @@ ion-card{
 }
 
 .loadingspinner{
-  --color : #161B22;
+  --color : #fff;
 }
 
 @keyframes fadeIn {
