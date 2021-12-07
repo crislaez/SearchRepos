@@ -2,6 +2,8 @@
 
 Search repos es una aplicación hecha en Ionic (Angular, TypeScript, Sass/Css, Html, Rxjs, Ngrx)
 
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_01.jpg" />
+<hr>
 <img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_1.jpg" />
 <hr>
 <img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_0.jpg" />
@@ -17,6 +19,8 @@ Search repos es una aplicación hecha en Ionic (Angular, TypeScript, Sass/Css, H
 <img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_5.jpg" />
 <hr>
 <img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_6.jpg" />
+<hr>
+<img src="https://github.com/crislaez/SearchRepos/blob/master/src/assets/images/foto_proyecto_7.jpg" />
 <hr>
 
 
