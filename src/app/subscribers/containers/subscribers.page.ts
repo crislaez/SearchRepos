@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { fromRepos } from '@clrepos/shared/repos';
 import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
 import { fromSubscriber, SubscriberActions } from '@clrepos/shared/subscribers';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
-import { combineLatest, EMPTY, Observable } from 'rxjs';
-import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-subscribers',
@@ -127,17 +127,15 @@ export class SubscribersPage implements OnInit {
     this.route.params,
     this.infiniteScroll$.pipe(startWith(this.statusComponent))
   ]).pipe(
-    filter(([{repoName}]) => !!repoName),
-    switchMap(([{repoName}, {page}]) =>
-      this.store.pipe(select(fromRepos.getUserName),
-        filter(userName => typeof userName === 'string'),
-        tap((userName) => {
-          this.store.dispatch(SubscriberActions.loadSubscribers({repoName, userName: (userName as string), page: page?.toString()}))
-        }),
-        switchMap(() =>
-          this.store.pipe(select(fromSubscriber.getSubscribers))
-        )
-      )
+    withLatestFrom(
+      this.store.pipe(select(fromRepos.getUserName))
+    ),
+    filter(([[{repoName}, {page}], userName]) => !!userName && !!repoName && !!page),
+    tap(([[{repoName}, {page}], userName]) =>
+      this.store.dispatch(SubscriberActions.loadSubscribers({repoName, userName: (userName as string), page: page?.toString()}))
+    ),
+    switchMap(() =>
+      this.store.pipe(select(fromSubscriber.getSubscribers))
     )
   );
 
@@ -145,7 +143,6 @@ export class SubscribersPage implements OnInit {
   constructor(
     private store: Store,
     private route: ActivatedRoute,
-    private router: Router
   ) { }
 
 

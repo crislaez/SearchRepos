@@ -21,7 +21,7 @@ export class CommentEffects {
           catchError((error) => {
             return of(
               CommentActions.saveComments({ comment: [], status: EntityStatus.Error }),
-              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_REPOS'})
+              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_COMMENTS'})
             );
           })
         )

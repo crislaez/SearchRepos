@@ -20,7 +20,7 @@ export class ReposEffects {
           catchError((error) => {
             return of(
               IssueActions.saveIssues({repoName, issues: [], page: 1, total_pages: 1, status: EntityStatus.Error}),
-              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_REPOS'})
+              NotificationActions.notificationFailure({message: 'ERRORS.ERROR_LOAD_ISSUES'})
             )
           })
         )

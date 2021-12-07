@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { fromIssue, Issue } from '@clrepos/shared/issue';
-import { IssueActions } from '@clrepos/shared/issue';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { fromIssue, Issue, IssueActions } from '@clrepos/shared/issue';
 import { fromRepos } from '@clrepos/shared/repos';
-import { errorImage, trackById, gotToTop } from '@clrepos/shared/shared/utils/utils';
+import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
-import { combineLatest, EMPTY, Observable } from 'rxjs';
-import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-issues',
@@ -155,25 +154,22 @@ export class IssuesPage implements OnInit {
     this.route.params,
     this.infiniteScroll$.pipe(startWith(this.statusComponent))
   ]).pipe(
-    filter(([{repoName}]) => !!repoName),
-    switchMap(([{repoName}, {page}]) =>
-      this.store.pipe(select(fromRepos.getUserName),
-        filter(userName => (typeof userName === 'string' && !!userName)),
-        tap((userName: any) => {
-          this.store.dispatch(IssueActions.loadIssues({userName, repoName, page: page.toString()}))
-        }),
-        switchMap(() =>
-          this.store.pipe(select(fromIssue.getIssues))
-        )
-      )
+    withLatestFrom(
+      this.store.pipe(select(fromRepos.getUserName))
+    ),
+    filter(([[{repoName}, {page}], userName]) => !!userName && !!repoName && !!page),
+    tap(([[{repoName}, {page}], userName]) =>
+      this.store.dispatch(IssueActions.loadIssues({userName, repoName, page: page.toString()}))
+    ),
+    switchMap(() =>
+      this.store.pipe(select(fromIssue.getIssues))
     )
   );
 
 
   constructor(
     private route: ActivatedRoute,
-    private store: Store,
-    private router: Router
+    private store: Store
   ) { }
 
 

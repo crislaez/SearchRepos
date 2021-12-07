@@ -7,7 +7,7 @@ import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/ut
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { EMPTY, Observable } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-comments',
@@ -114,19 +114,17 @@ export class CommentsPage {
   title$: Observable<string> = this.store.pipe(select(fromIssue.getRepoName));
 
   comment$: Observable<Comment[]> = this.route.params.pipe(
-    filter( ({issueNumber}) => !!issueNumber),
-    switchMap( ({issueNumber}) =>
-      this.store.pipe(select(fromIssue.getRepoName),
-        switchMap( (repoName) =>
-          this.store.pipe(select(fromRepos.getUserName),
-            filter(userName => typeof userName === 'string'),
-            tap((userName: any) =>
-              this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber}))
-            ),
-            switchMap(() => this.store.pipe(select(fromComment.getComments)))
-          )
-        )
-      )
+    withLatestFrom(
+      this.store.pipe(select(fromRepos.getUserName)),
+      this.store.pipe(select(fromIssue.getRepoName))
+    ),
+    tap(data => console.log(data)),
+    filter(([{issueNumber}, userName, repoName]) => !!issueNumber && !!repoName && !!userName),
+    tap(([{issueNumber}, userName, repoName]) =>
+      this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber}))
+    ),
+    switchMap(() =>
+      this.store.pipe(select(fromComment.getComments))
     )
   );
 

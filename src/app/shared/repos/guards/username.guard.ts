@@ -16,7 +16,6 @@ export class UserNameGuard implements CanLoad {
   canLoad(): Observable<boolean | UrlTree> {
     return this.store.pipe(
       select(fromRepos.getStatus),
-      tap(d => console.log(d)),
       first(status => status === EntityStatus.Loaded || status === EntityStatus.Initial),
       withLatestFrom(
         this.store.pipe(select(fromRepos.getUserName)),

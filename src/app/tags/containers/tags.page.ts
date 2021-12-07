@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, ViewChild } f
 import { ActivatedRoute } from '@angular/router';
 import { fromRepos } from '@clrepos/shared/repos';
 import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
-import { fromTag, Tag, TagActions } from '@clrepos/shared/tag';
+import { fromTag, TagActions } from '@clrepos/shared/tag';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, startWith, switchMap, tap } from 'rxjs/operators';
+import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tags',
@@ -122,28 +122,26 @@ export class TagsPage implements OnInit {
     page:1,
   };
 
-  tags$: Observable<Tag[]> = combineLatest([
+  tags$ = combineLatest([
     this.route.params,
     this.infiniteScroll$.pipe(startWith(this.statusComponent))
   ]).pipe(
-    filter( ([{repoName}]) => !!repoName),
-    switchMap(([{repoName}, {page}]) =>
-      this.store.pipe(select(fromRepos.getUserName),
-        filter(userName => (typeof userName === 'string' && !!repoName)),
-        tap((userName: any) => {
-          this.store.dispatch(TagActions.loadTags({userName, repoName, page:page.toString()}))
-        }),
-        switchMap(() =>
-          this.store.pipe(select(fromTag.getTags))
-        )
-      )
+    withLatestFrom(
+      this.store.pipe(select(fromRepos.getUserName))
+    ),
+    filter(([[{repoName}, {page}], userName]) => !!userName && !!repoName && !!page),
+    tap(([[{repoName}, {page}], userName]) =>
+      this.store.dispatch(TagActions.loadTags({userName, repoName, page:page.toString()}))
+    ),
+    switchMap(() =>
+      this.store.pipe(select(fromTag.getTags))
     )
   );
 
 
   constructor(
     private store: Store,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) { }
 
 
