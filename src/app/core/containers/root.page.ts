@@ -11,12 +11,7 @@ import { Store } from '@ngrx/store';
    <!-- CABECERA  -->
    <ion-header no-border >
      <ion-toolbar mode="md|ios">
-       <ion-button fill="clear" size="small" slot="start" (click)="open()">
-         <!-- <ion-menu-button class="text-color"></ion-menu-button> -->
-       </ion-button>
        <ion-title class="text-color" >{{'COMMON.TITLE' | translate}}</ion-title>
-       <div size="small" slot="end">
-       </div>
      </ion-toolbar>
    </ion-header>
 

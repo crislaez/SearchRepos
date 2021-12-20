@@ -249,10 +249,22 @@ $textColor: #fff;
 
 // 111827
 // 282c34
-$backColorSecond: #111827;
-$backColorFirst: #1D2536;
+// $backColorSecond: #111827;
+// $backColorFirst: #1D2536;
+
+$backColorSecond: #010409;
+$backColorFirst: #161B22;
+
 $primary: #fff;
 
+
+ion-toolbar{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
 
 ion-infinite-scroll-content{
   ion-spinner{
@@ -310,7 +322,7 @@ ion-tab-bar{
 ion-searchbar{
   --box-shadow: none !important;
   --border-radius: 50px !important;
-  --background:#1D2536;
+  --background:#161B22;
 }
 
 ion-menu{
@@ -328,8 +340,8 @@ ion-menu{
 ion-card{
   box-shadow: none !important;
   width: 96%;
-  // background: #1D2536;
-  --background: rgba(29,37,54,0.90);
+  background: #161B22;
+  // --background: rgba(29,37,54,0.90);
 
   //titulo de la card
   ion-card-title{
@@ -402,7 +414,7 @@ ion-card{
 }
 
 .back-color {
-  --background: #111827;
+  --background: #010409;
 }
 
 // PAGE BACKGROUND COLOR
