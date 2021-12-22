@@ -1,5 +1,5 @@
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
-import { createAction, props, union} from '@ngrx/store';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
+import { createAction, props } from '@ngrx/store';
 import { Subscriber } from '../models';
 
 export const loadSubscribers = createAction(

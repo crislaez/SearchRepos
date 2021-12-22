@@ -1,7 +1,7 @@
-import { createReducer, on  } from '@ngrx/store';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
+import { createReducer, on } from '@ngrx/store';
 import * as IssueActions from '../actions/issue.actions';
 import { Issue } from '../models';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 
 export const issueFeatureKey = 'issues';
 

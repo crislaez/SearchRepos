@@ -1,4 +1,4 @@
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
 import { createAction, props } from '@ngrx/store';
 import { Tag } from '../models';
 

@@ -1,4 +1,4 @@
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
 import { createReducer, on } from '@ngrx/store';
 import * as CommentActions from '../actions/comment.actions';
 import { Comment } from '../models';

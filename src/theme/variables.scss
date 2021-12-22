@@ -247,16 +247,15 @@
 $backColor: #282c34;
 $textColor: #fff;
 
-// 111827
-// 282c34
-// $backColorSecond: #111827;
-// $backColorFirst: #1D2536;
 
-$backColorSecond: #010409;
+$backColorSecond: #0D1117;
 $backColorFirst: #161B22;
 
 $primary: #fff;
 
+html {
+  scroll-behavior: smooth;
+}
 
 ion-toolbar{
   display: flex;
@@ -414,7 +413,7 @@ ion-card{
 }
 
 .back-color {
-  --background: #010409;
+  --background: #0D1117;
 }
 
 // PAGE BACKGROUND COLOR

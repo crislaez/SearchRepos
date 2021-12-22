@@ -28,6 +28,11 @@ export const gotToTop = (content: IonContent): void => {
   content.scrollToTop(500);
 }
 
+export const sliceCharacter = (text: string): string => {
+  return text?.length > 20 ? text?.slice(0, 20) + '...' : text ;
+}
+
+
 export enum EntityStatus {
   Initial = 'initial',
   Pending = 'pending',

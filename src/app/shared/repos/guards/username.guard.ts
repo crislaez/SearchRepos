@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CanLoad, Router, UrlTree } from '@angular/router';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { first, map, take, tap, withLatestFrom } from 'rxjs/operators';
+import { first, map, take, withLatestFrom } from 'rxjs/operators';
 import * as fromRepos from '../selectors/repos.selectors';
 
 @Injectable({

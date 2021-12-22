@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { NotificationActions } from '@clrepos/shared/notification';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import * as SubscriberActions from '../actions/subscriber.actions';
 import { SubscriberService } from '../services/subscriber.service';
 

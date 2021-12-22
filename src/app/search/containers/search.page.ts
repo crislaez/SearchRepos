@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, ViewChild } from '@an
 import { FormControl } from '@angular/forms';
 import { Keyboard } from '@capacitor/keyboard';
 import { fromRepos, ReposActions } from '@clrepos/shared/repos';
-import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
+import { errorImage, gotToTop, trackById, sliceCharacter } from '@clrepos/shared/utils/utils/functions';
 import { IonContent, IonInfiniteScroll, Platform } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { startWith, switchMap, tap } from 'rxjs/operators';
@@ -41,7 +41,7 @@ import { startWith, switchMap, tap } from 'rxjs/operators';
 
                       <ion-card *ngFor="let repo of respos; trackBy: trackById" >
                         <ion-card-header>
-                          <ion-card-title class="text-second-color">{{repo?.name }}</ion-card-title>
+                          <ion-card-title class="text-second-color">{{ sliceCharacter(repo?.name) }}</ion-card-title>
                         </ion-card-header>
 
                         <ion-card-content class="text-second-color">
@@ -153,12 +153,12 @@ import { startWith, switchMap, tap } from 'rxjs/operators';
 })
 export class SearchPage {
 
-  @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
-  @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
   errorImage = errorImage;
   gotToTop = gotToTop;
-
+  sliceCharacter = sliceCharacter;
+  @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonContent, {static: true}) content: IonContent;
   search = new FormControl('');
   showButton: boolean = false;
 
@@ -179,7 +179,6 @@ export class SearchPage {
     switchMap(() =>
       this.store.pipe(select(fromRepos.getRepos))
     )
-    // ,tap(subs => console.log({subs}))
   );
 
 
@@ -247,3 +246,4 @@ export class SearchPage {
 
 
 }
+// class="scrollToTop"

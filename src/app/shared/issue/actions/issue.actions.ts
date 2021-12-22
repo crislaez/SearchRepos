@@ -1,6 +1,6 @@
-import { createAction, props, union} from '@ngrx/store';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
+import { createAction, props } from '@ngrx/store';
 import { Issue } from '../models';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 
 export const loadIssues = createAction(
   '[Issue] Load Issues',

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, ViewChild } f
 import { ActivatedRoute } from '@angular/router';
 import { fromIssue, Issue, IssueActions } from '@clrepos/shared/issue';
 import { fromRepos } from '@clrepos/shared/repos';
-import { errorImage, gotToTop, trackById } from '@clrepos/shared/shared/utils/utils';
+import { errorImage, gotToTop, trackById } from '@clrepos/shared/utils/utils/functions';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
@@ -23,7 +23,7 @@ import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operator
 
                 <div class="header fade-in-card" no-border>
                   <ion-back-button (click)="back()" defaultHref="./search" class="text-second-color" [text]="''"></ion-back-button>
-                  <h1 class="capital-letter text-second-color font-title">{{'COMMON.ISSUE_TITLE' | translate}} {{title}}</h1>
+                  <h1 class="capital-letter text-second-color font-title">{{ title }}</h1>
                   <div class="header-container-empty" ></div>
                 </div>
 

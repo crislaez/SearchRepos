@@ -1,7 +1,7 @@
-import { createReducer, on  } from '@ngrx/store';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
+import { createReducer, on } from '@ngrx/store';
 import * as SubscriberActions from '../actions/subscriber.actions';
 import { Subscriber } from '../models';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 
 export const subscriberFeatureKey = 'subscriber';
 export interface State{

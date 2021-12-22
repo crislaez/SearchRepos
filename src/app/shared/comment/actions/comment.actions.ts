@@ -1,6 +1,6 @@
-import { createAction, props, union} from '@ngrx/store';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
+import { createAction, props } from '@ngrx/store';
 import { Comment } from '../models';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
 
 export const loadComments = createAction(
   '[Comment] Load Comments',

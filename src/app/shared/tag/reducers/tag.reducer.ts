@@ -1,7 +1,7 @@
 import { createReducer, on  } from '@ngrx/store';
 import * as TagActions from '../actions/tag.actions';
 import { Tag } from '../models';
-import { EntityStatus } from '@clrepos/shared/shared/utils/utils';
+import { EntityStatus } from '@clrepos/shared/utils/utils/functions';
 
 
 export const tagFeatureKey = 'tag';
