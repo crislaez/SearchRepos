@@ -2,22 +2,22 @@ import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { ReposModule } from '@clrepos/shared/repos/repos.module';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../environments/environment';
 import * as appConfig from './app-config';
 import { AppRoutingModule } from './app-routing.module';
 import { RootComponent } from './core';
+import { extModules } from './core/build-specifics/index';
 import { CoreModule } from './core/core.module';
 import { ENVIRONMENT } from './core/externals';
 import { appInitTranslations, createTranslateLoader } from './core/i18n/utils/custom-18n-functions';
 import { DynamicLocaleId } from './core/i18n/utils/dynamic-locale-id.class';
 import { CoreConfigService } from './core/services/core-config.service';
 import { HttpErrorInterceptor } from './core/services/http-error.interceptor';
-import { ReposModule } from '@clrepos/shared/repos/repos.module';
 
 export function appInitializerFactory(translate: TranslateService, coreConfig: CoreConfigService): Function {
   coreConfig.importConfig(appConfig);
@@ -27,8 +27,6 @@ export function appInitializerFactory(translate: TranslateService, coreConfig: C
 export function localeIdFactory(translate: TranslateService): DynamicLocaleId {
   return new DynamicLocaleId(translate);
 }
-
-
 
 @NgModule({
   entryComponents: [],
@@ -52,8 +50,8 @@ export function localeIdFactory(translate: TranslateService): DynamicLocaleId {
         },
       }
     ),
+    extModules,
     EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({maxAge:20}),
     AppRoutingModule,
     HttpClientModule
   ],

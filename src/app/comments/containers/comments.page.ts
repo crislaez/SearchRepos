@@ -13,23 +13,16 @@ import { filter, switchMap, tap, withLatestFrom } from 'rxjs/operators';
   selector: 'app-comments',
   template: `
   <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
-    <div class="container components-color-second">
+    <div class="empty-header components-color-primary">
+    </div>
 
+    <div class="container components-color-second">
       <ng-container *ngIf="comment$ | async as comments">
         <ng-container *ngIf="(status$ | async) as status">
           <ng-container *ngIf="status !== 'pending'; else loader">
             <ng-container *ngIf="status !== 'error'; else serverError">
 
               <ng-container *ngIf="comments?.length > 0 ; else noData">
-
-                <div class="header fade-in-card" no-border>
-                  <ng-container *ngIf="(title$ | async) as title">
-                    <ion-back-button (click)="back(title)" defaultHref=""  class="text-second-color" [text]="''"></ion-back-button>
-                    <h1 class="capital-letter text-second-color font-title">{{ title }}</h1>
-                    <div class="header-container-empty" ></div>
-                  </ng-container>
-                </div>
-
                 <ion-card class="fade-in-card" *ngFor="let comment of comments; trackBy: trackById" >
                   <ion-card-header>
                     <ion-card-title class="text-second-color capital-letter font-big">{{comment?.user?.login }}</ion-card-title>
@@ -47,8 +40,6 @@ import { filter, switchMap, tap, withLatestFrom } from 'rxjs/operators';
                     </div>
                     <div class="font-small margin-top-10"><a [href]="comment?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
                   </ion-card-content>
-
-                  <!-- <ion-ripple-effect></ion-ripple-effect> -->
                 </ion-card>
 
               </ng-container>
@@ -57,37 +48,19 @@ import { filter, switchMap, tap, withLatestFrom } from 'rxjs/operators';
         </ng-container>
       </ng-container>
 
-      <!-- IS NO DATA  -->
-      <ng-template #noData>
-        <div class="header" no-border>
-          <ion-back-button defaultHref="../" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_COMMENT_TITLE' | translate}}</h1>
-          <div class="header-container-empty" ></div>
-        </div>
-        <div class="error-serve">
-          <span class="text-second-color">{{'COMMON.NORESULT' | translate}}</span>
-        </div>
-      </ng-template>
-
       <!-- IS ERROR -->
       <ng-template #serverError>
-        <div class="header" no-border>
-          <ion-back-button defaultHref="../" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_COMMENT_TITLE' | translate}}</h1>
-          <div class="header-container-empty" ></div>
-        </div>
-        <div class="error-serve">
-          <div>
-            <span><ion-icon class="text-second-color big-size" name="cloud-offline-outline"></ion-icon></span>
-            <br>
-            <span class="text-second-color">{{'COMMON.ERROR' | translate}}</span>
-          </div>
-        </div>
+        <app-no-data [title]="'COMMON.ERROR'" [image]="'assets/images/error.png'" [top]="'10vh'"></app-no-data>
+      </ng-template>
+
+      <!-- IS NO DATA  -->
+      <ng-template #noData>
+        <app-no-data [title]="'COMMON.NORESULT'" [image]="'assets/images/empty.png'" [top]="'10vh'"></app-no-data>
       </ng-template>
 
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner class="loadingspinner"></ion-spinner>
+        <app-spinner [top]="'80%'"></app-spinner>
       </ng-template>
     </div>
 
@@ -118,7 +91,6 @@ export class CommentsPage {
       this.store.pipe(select(fromRepos.getUserName)),
       this.store.pipe(select(fromIssue.getRepoName))
     ),
-    tap(data => console.log(data)),
     filter(([{issueNumber}, userName, repoName]) => !!issueNumber && !!repoName && !!userName),
     tap(([{issueNumber}, userName, repoName]) =>
       this.store.dispatch(CommentActions.loadComments({userName, repoName, issueNumber}))

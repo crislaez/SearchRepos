@@ -12,6 +12,9 @@ import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operator
   selector: 'app-tags',
   template: `
   <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
+    <div class="empty-header components-color-primary">
+    </div>
+
     <div class="container components-color-second">
 
       <ng-container *ngIf="(tags$ | async) as tags">
@@ -21,38 +24,16 @@ import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operator
 
               <ng-container *ngIf="tags?.length > 0; else noData">
 
-                <div class="header" no-border>
-                  <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-                  <h1 class="capital-letter text-second-color font-title">{{ title }}</h1>
-                  <div class="header-container-empty" ></div>
-                </div>
-
-                <ion-card class="fade-in-card" *ngFor="let tag of tags; trackBy: trackById" >
-                  <ion-card-header>
-                    <ion-card-title class="text-second-color capital-letter font-big">{{ tag?.name }}</ion-card-title>
-                  </ion-card-header>
-
-                  <ion-card-content class="text-second-color">
-                    <div class="displays-around margin-top font-small capital-letter">
-                      <div class="width-half margin-top-10">{{'COMMON.COMMIT' | translate}}:</div>
-                      <div class="width-half margin-top-10">{{tag?.commit?.sha}}</div>
-                    </div>
-                    <!-- <div class="font-small margin-top-10" *ngIf="tag?.comments > 0"><ion-button color="primary" class="font-small" (click)="saveCommentTotalPage(tag?.comments)" [routerLink]="['/comments/'+issue?.number]">{{'COMMON.SEE_COMMENTS' | translate}}</ion-button></div> -->
-                  </ion-card-content>
-
-                  <!-- <ion-ripple-effect></ion-ripple-effect> -->
-                </ion-card>
-
-                <!-- INFINITE SCROLL  -->
-                <ng-container *ngIf="(totalPages$ | async) as total">
-                  <ng-container *ngIf="statusComponent?.page < total">
-                    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-                      <ion-infinite-scroll-content class="loadingspinner">
-                        <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner>
-                      </ion-infinite-scroll-content>
-                    </ion-infinite-scroll>
-                  </ng-container>
-                </ng-container>
+                <!-- INFINITE SCROLL CONTAINER -->
+                <app-infinite-scroll-wrapper
+                  *ngIf="(totalPages$ | async) as total"
+                  [status]="status"
+                  [total]="total"
+                  [page]="statusComponent?.page"
+                  [from]="'tags'"
+                  [items]="tags"
+                  (loadDataTrigger)="loadData($event)">
+                </app-infinite-scroll-wrapper>
 
               </ng-container>
             </ng-container>
@@ -60,37 +41,19 @@ import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operator
         </ng-container>
       </ng-container>
 
-     <!-- IS NO DATA  -->
-     <ng-template #noData>
-        <div class="header" no-border>
-          <ion-back-button defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
-          <div class="header-container-empty" ></div>
-        </div>
-        <div class="error-serve">
-          <span class="text-second-color">{{'COMMON.NORESULT' | translate}}</span>
-        </div>
-      </ng-template>
-
       <!-- IS ERROR -->
       <ng-template #serverError>
-        <div class="header" no-border>
-          <ion-back-button defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-          <h1 class="capital-letter text-second-color font-title">{{'COMMON.NO_TAGS_TITLE' | translate}}</h1>
-          <div class="header-container-empty" ></div>
-        </div>
-        <div class="error-serve">
-          <div>
-            <span><ion-icon class="text-second-color big-size" name="cloud-offline-outline"></ion-icon></span>
-            <br>
-            <span class="text-second-color">{{'COMMON.ERROR' | translate}}</span>
-          </div>
-        </div>
+        <app-no-data [title]="'COMMON.ERROR'" [image]="'assets/images/error.png'" [top]="'10vh'"></app-no-data>
+      </ng-template>
+
+      <!-- IS NO DATA  -->
+      <ng-template #noData>
+        <app-no-data [title]="'COMMON.NORESULT'" [image]="'assets/images/empty.png'" [top]="'10vh'"></app-no-data>
       </ng-template>
 
       <!-- LOADER  -->
       <ng-template #loader>
-        <ion-spinner class="loadingspinner"></ion-spinner>
+        <app-spinner [top]="'80%'"></app-spinner>
       </ng-template>
     </div>
 
@@ -151,17 +114,17 @@ export class TagsPage implements OnInit {
   }
 
   // INIFINITE SCROLL
-  loadData(event, total) {
-    setTimeout(() => {
-      this.statusComponent = {page: this.statusComponent?.page + 1}
+  loadData({event, total}) {
+    this.statusComponent = {page: this.statusComponent?.page + 1}
 
-      if(this.statusComponent?.page >= total){
-        if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true;
-      }
-      this.infiniteScroll$.next(this.statusComponent);
-      event.target.complete();
-    }, 500);
-    this.content.scrollToBottom()
+    if(this.statusComponent?.page >= total){
+      if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true;
+    }
+
+    this.infiniteScroll$.next(this.statusComponent);
+
+    event.target.complete();
+    // this.content.scrollToBottom()
   }
 
   back(): void{

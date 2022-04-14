@@ -15,6 +15,8 @@
     "lib": ["es2018", "dom"],
     "paths":{
       "@clrepos/shared/*": ["./src/app/shared/*"],
+      "@clrepos/core/*": ["./src/app/core/*"],
+      "@clrepos/shared-ui/*": ["./src/app/shared-ui/*"],
     }
   },
   "angularCompilerOptions": {

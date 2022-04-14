@@ -241,20 +241,27 @@
 *{
   // font-family: 'Source Sans Pro', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   // font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  // font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif
+
 }
 
+$secondary: #6160EA;
 $backColor: #282c34;
 $textColor: #fff;
 
 
-$backColorSecond: #0D1117;
-$backColorFirst: #161B22;
+$backColorSecond: #ECEEED;
+$backColorFirst: #1F2937;
 
 $primary: #fff;
 
 html {
   scroll-behavior: smooth;
+}
+
+ion-content{
+  --background: #060607 !important;
 }
 
 ion-toolbar{
@@ -292,7 +299,7 @@ ion-spinner {
 
 //HEADER PRINCIPAÑ
 ion-header{
-  background: $backColorFirst;
+  background: $secondary;
   //header principa
   ion-toolbar{
     width: 100%;
@@ -312,6 +319,7 @@ ion-header{
   }
 }
 
+
 //footer barra abajo
 ion-tab-bar{
   background: $backColor;
@@ -321,7 +329,7 @@ ion-tab-bar{
 ion-searchbar{
   --box-shadow: none !important;
   --border-radius: 50px !important;
-  --background:#161B22;
+  --background:#BCBCFA;
 }
 
 ion-menu{
@@ -339,8 +347,8 @@ ion-menu{
 ion-card{
   box-shadow: none !important;
   width: 96%;
-  background: #161B22;
-  // --background: rgba(29,37,54,0.90);
+  background: #F7FBFA;
+
 
   //titulo de la card
   ion-card-title{
@@ -409,16 +417,20 @@ ion-card{
 }
 
 .text-second-color{
-  color: $textColor;
+  color: $backColor;
 }
 
 .back-color {
-  --background: #0D1117;
+  --background: #6160EA;
 }
 
 // PAGE BACKGROUND COLOR
 .components-color{
   background: $textColor;
+}
+
+.components-color-primary{
+  background: $secondary;
 }
 
 .components-color-second{
@@ -463,6 +475,7 @@ ion-card{
 
 .chip{
   border-radius: 10px;
+  color: white;
   margin-top: 5px !important;
   min-height: 20px !important;
   padding: 5px;
@@ -539,7 +552,8 @@ ion-card{
 .form{
   width: 90%;
   margin: auto;
-  margin-top: 30px;
+  padding-top: 50px;
+  padding-bottom: 10px;
 }
 
 .div-container{
@@ -556,7 +570,7 @@ ion-card{
 
 .empty-header{
   width: 100%;
-  margin-top: 70px;
+  height: 150px;
 }
 
 .header-container-empty{
@@ -571,8 +585,10 @@ ion-card{
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  // align-items: flex-start !important;
-  align-content:flex-start
+  align-content:flex-start;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  margin-top: -25px;
 }
 
 .fade-in-card {

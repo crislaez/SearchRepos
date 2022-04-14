@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { GenericsModule } from '@clrepos/shared-ui/generics/generics.module';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IssueModule } from '../shared/issue/issue.module';
@@ -10,8 +11,8 @@ import { IssuesPageRoutingModule } from './issues-routing.module';
   imports: [
     CommonModule,
     IonicModule,
-    // FormsModule,
     IssueModule,
+    GenericsModule,
     TranslateModule.forChild(),
     IssuesPageRoutingModule
   ],

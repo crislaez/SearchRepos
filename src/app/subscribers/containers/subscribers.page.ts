@@ -12,48 +12,26 @@ import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operator
   selector: 'app-subscribers',
   template:`
   <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="logScrolling($any($event))">
-    <div class="container components-color-second">
+    <div class="empty-header components-color-primary">
+    </div>
 
+    <div class="container components-color-second">
       <ng-container *ngIf="(subscribers$ | async) as subscribers">
         <ng-container *ngIf="(status$ | async) as status">
           <ng-container *ngIf="status !== 'pending' || statusComponent?.page !== 1; else loader">
             <ng-container *ngIf="status !== 'error'; else serverError">
               <ng-container *ngIf="subscribers?.length > 0; else noData">
 
-                <div class="header" no-border>
-                  <ion-back-button (click)="back()" defaultHref="/search" class="text-second-color" [text]="''"></ion-back-button>
-                  <h1 class="capital-letter text-second-color font-title">{{ title }}</h1>
-                  <div class="header-container-empty" ></div>
-                </div>
-
-                <ion-card class="fade-in-card" *ngFor="let subscriber of subscribers; trackBy: trackById" >
-                  <img [src]="subscriber?.avatar_url" (error)="errorImage($event)">
-                  <ion-card-header>
-                    <ion-card-title class="text-second-color capital-letter">{{subscriber?.login }}</ion-card-title>
-                  </ion-card-header>
-
-                  <ion-card-content class="text-second-color">
-                    <!-- <div class="displays-around margin-top font-small capital-letter">
-                      <div class="width-half margin-top-10">{{'COMMON.COMMIT' | translate}}:</div>
-                      <div class="width-half margin-top-10">{{subscriber?.commit?.sha}}</div>
-                    </div> -->
-
-                  <div class="font-small margin-top-10"><a [href]="subscriber?.html_url">{{'COMMON.SEE_IN_GITHUB' | translate}}</a></div>
-                  </ion-card-content>
-
-                  <!-- <ion-ripple-effect></ion-ripple-effect> -->
-                </ion-card>
-
-                <!-- INFINITE SCROLL  -->
-                <ng-container *ngIf="(totalPages$ | async) as total">
-                  <ng-container *ngIf="statusComponent?.page < total">
-                    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-                      <ion-infinite-scroll-content class="loadingspinner">
-                        <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner>
-                      </ion-infinite-scroll-content>
-                    </ion-infinite-scroll>
-                  </ng-container>
-                </ng-container>
+                <!-- INFINITE SCROLL CONTAINER -->
+                <app-infinite-scroll-wrapper
+                  *ngIf="(totalPages$ | async) as total"
+                  [status]="status"
+                  [total]="total"
+                  [page]="statusComponent?.page"
+                  [from]="'subscribers'"
+                  [items]="subscribers"
+                  (loadDataTrigger)="loadData($event)">
+                </app-infinite-scroll-wrapper>
 
               </ng-container>
             </ng-container>
@@ -109,7 +87,6 @@ export class SubscribersPage implements OnInit {
   @ViewChild(IonInfiniteScroll) ionInfiniteScroll: IonInfiniteScroll;
   @ViewChild(IonContent, {static: true}) content: IonContent;
   trackById = trackById;
-  errorImage = errorImage;
   gotToTop = gotToTop;
   title: string = '';
   page: number = 1;
@@ -151,17 +128,16 @@ export class SubscribersPage implements OnInit {
   }
 
   // INIFINITE SCROLL
-  loadData(event, total) {
-    setTimeout(() => {
-      this.statusComponent = { page: this.statusComponent?.page + 1}
-      // this.page = this.page + 1;
-      if(this.statusComponent?.page >= total){
-        if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true;
-      }
-      this.infiniteScroll$.next(this.statusComponent);
-      event.target.complete();
-    }, 500);
-    this.content.scrollToBottom()
+  loadData({event, total}) {
+    this.statusComponent = { page: this.statusComponent?.page + 1}
+
+    if(this.statusComponent?.page >= total){
+      if(this.ionInfiniteScroll) this.ionInfiniteScroll.disabled = true;
+    }
+    this.infiniteScroll$.next(this.statusComponent);
+
+    event.target.complete();
+    // this.content.scrollToBottom()
   }
 
   back(): void{
