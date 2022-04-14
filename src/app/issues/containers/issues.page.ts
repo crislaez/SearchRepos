@@ -74,16 +74,6 @@ import { filter, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operator
                   (loadDataTrigger)="loadData($event)">
                 </app-infinite-scroll>
 
-                <!-- <ng-container *ngIf="(totalPages$ | async) as total">
-                  <ng-container *ngIf="statusComponent?.page < total">
-                    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event, total)">
-                      <ion-infinite-scroll-content class="loadingspinner">
-                        <ion-spinner *ngIf="status === 'pending'" class="loadingspinner"></ion-spinner>
-                      </ion-infinite-scroll-content>
-                    </ion-infinite-scroll>
-                  </ng-container>
-                </ng-container> -->
-
               </ng-container>
             </ng-container>
           </ng-container>
