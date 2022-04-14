@@ -1,6 +1,6 @@
 
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { EntityStatus, errorImage } from '@clrepos/shared/utils/utils/functions';
+import { EntityStatus, errorImage, trackById } from '@clrepos/shared/utils/utils/functions';
 
 @Component({
   selector: 'app-infinite-scroll-wrapper',
@@ -49,10 +49,11 @@ import { EntityStatus, errorImage } from '@clrepos/shared/utils/utils/functions'
 export class InfiniteScrollWrapperComponent {
 
   errorImage = errorImage;
+  trackById = trackById;
   @Input() status: EntityStatus;
   @Input() total: number;
   @Input() page: number;
-  @Input() from: 'subscribers';
+  @Input() from: string;
   @Input() items: any[];
   @Output() loadDataTrigger = new EventEmitter<{event, total}>();
 

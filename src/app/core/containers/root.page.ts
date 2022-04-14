@@ -3,7 +3,7 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 
 
 @Component({
@@ -29,7 +29,7 @@ import { filter, map } from 'rxjs/operators';
 })
 export class RootComponent {
 
-  navItems = ['/search'];
+  navItems = ['/search','/'];
 
   currentSection$: Observable<{url:string, label:string}> = this.router.events.pipe(
     filter((event: any) => event instanceof NavigationStart),
@@ -44,13 +44,11 @@ export class RootComponent {
     })
   );
 
+
   constructor(
     private menu: MenuController,
-    private router: Router,
-    private store: Store
-  ) {
-    // this.menu$.subscribe(data => console.log(data))
-  }
+    private router: Router
+  ) { }
 
 
   open() {
